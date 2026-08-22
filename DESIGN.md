@@ -1,6 +1,6 @@
 ---
-name: Russ Rimmerman Blog
-description: "Practical cloud engineering from someone who's been building for 30 years."
+name: Nithin Blog
+description: "Cloud Developer & AI Solutions Architect technical blog and portfolio."
 colors:
   azure-brand: "#0078d4"
   azure-light: "#3b8ef8"
@@ -86,7 +86,7 @@ components:
     padding: "8px 12px 8px 36px"
 ---
 
-# Design System: Russ Rimmerman Blog
+# Design System: Nithin Blog
 
 ## 1. Overview
 

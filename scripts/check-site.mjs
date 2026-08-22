@@ -581,7 +581,7 @@ for (const excluded of ["/404/", "/search/"]) {
 const rss = await readFile(path.join(dist, "rss.xml"), "utf8");
 if (
   !/xmlns:atom="http:\/\/www\.w3\.org\/2005\/Atom"/i.test(rss) ||
-  !/<atom:link\b[^>]*\bhref="https:\/\/www\.russrimmerman\.com\/rss\.xml"[^>]*\brel="self"[^>]*\btype="application\/rss\+xml"/i.test(
+  !/<atom:link\b[^>]*\bhref="https:\/\/nithin42\.github\.io\/Nithin-gitblog\/rss\.xml"[^>]*\brel="self"[^>]*\btype="application\/rss\+xml"/i.test(
     rss
   )
 ) {

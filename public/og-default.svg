@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
-  <title id="title">Russ Rimmerman</title>
-  <desc id="description">Practical cloud engineering field notes</desc>
+  <title id="title">Nithin</title>
+  <desc id="description">Cloud Developer &amp; AI Solutions Architect</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#070d16"/>
@@ -17,9 +17,9 @@
     <path d="M100 0v630M300 0v630M500 0v630M700 0v630M900 0v630M1100 0v630"/>
   </g>
   <rect x="88" y="100" width="118" height="118" rx="28" fill="#0d1622" stroke="#3b8ef8" stroke-width="3"/>
-  <text x="147" y="177" fill="url(#mark)" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="52" font-weight="700" text-anchor="middle">RR</text>
-  <text x="88" y="325" fill="#ffffff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="68" font-weight="700">Russ Rimmerman</text>
-  <text x="88" y="392" fill="#bfe1ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="34">Practical cloud engineering field notes</text>
-  <text x="88" y="475" fill="#cad3df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="27">Azure · AI · Identity · Copilot · Cloud Architecture</text>
+  <text x="147" y="177" fill="url(#mark)" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="52" font-weight="700" text-anchor="middle">N</text>
+  <text x="88" y="325" fill="#ffffff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="68" font-weight="700">Nithin</text>
+  <text x="88" y="392" fill="#bfe1ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="34">Cloud Developer &amp; AI Solutions Architect</text>
+  <text x="88" y="475" fill="#cad3df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="27">Azure · AI Foundry · Privacy · Multi-Agent · Cloud Architecture</text>
   <rect x="88" y="527" width="180" height="8" rx="4" fill="url(#mark)"/>
 </svg>
