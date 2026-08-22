@@ -1,0 +1,67 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import { slugify } from "@/utils/tags";
+import { AUTHOR } from "@/consts";
+import { url } from "@/utils/paths";
+
+export const getStaticPaths = (async () => {
+  const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
+
+  const tags = new Map<string, { label: string; posts: typeof posts }>();
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      const slug = slugify(tag);
+      const existing = tags.get(slug);
+      if (existing) {
+        existing.posts.push(post);
+      } else {
+        tags.set(slug, { label: tag, posts: [post] });
+      }
+    }
+  }
+
+  return [...tags.entries()].map(([slug, { label, posts }]) => ({
+    params: { tag: slug },
+    props: {
+      label,
+      posts,
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { label, posts } = Astro.props;
+---
+
+<BaseLayout
+  title={`Posts tagged "${label}"`}
+  description={`Blog posts about ${label} by ${AUTHOR.name}.`}
+>
+  <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <header class="mb-10">
+      <a
+        href={url('/tags/')}
+        class="text-ink-500 hover:text-azure-600 dark:text-ink-400 dark:hover:text-azure-400 mb-4 inline-flex items-center gap-1 text-sm font-medium transition"
+      >
+        &larr; All tags
+      </a>
+      <h1
+        class="text-ink-900 text-3xl font-bold tracking-tight sm:text-4xl dark:text-white"
+      >
+        <span class="text-ink-400 dark:text-ink-500">#</span>{label}
+      </h1>
+      <p class="text-ink-600 dark:text-ink-300 mt-3 text-lg">
+        {posts.length}
+        {posts.length === 1 ? "post" : "posts"}
+      </p>
+    </header>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map(post => <PostCard post={post} headingLevel={2} />)}
+    </div>
+  </div>
+</BaseLayout>

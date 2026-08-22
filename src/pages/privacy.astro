@@ -1,0 +1,67 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { AUTHOR } from "@/consts";
+---
+
+<BaseLayout
+  title="Privacy"
+  description="How russrimmerman.com handles theme preferences, newsletter sign-ups, comments, and external services."
+>
+  <article class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <header class="mb-10">
+      <h1
+        class="text-ink-900 text-3xl font-bold tracking-tight text-balance sm:text-4xl dark:text-white"
+      >
+        Privacy
+      </h1>
+      <p class="text-ink-500 dark:text-ink-400 mt-3 text-sm">
+        Last updated July 30, 2026
+      </p>
+    </header>
+
+    <div class="prose prose-lg dark:prose-invert max-w-none">
+      <p>
+        This is a personal blog and portfolio. It does not currently include
+        first-party advertising or analytics.
+      </p>
+
+      <h2>Theme preference</h2>
+      <p>
+        If you change the color theme, the site stores that preference in your
+        browser's local storage. The value is used only to restore your selected
+        light or dark theme on later visits.
+      </p>
+
+      <h2>Newsletter sign-up</h2>
+      <p>
+        When newsletter sign-up is available and you submit the form, your email
+        address is sent to this site's managed API and then to the configured
+        newsletter provider. The form also includes an empty anti-spam field. Do
+        not submit the form if you do not want your address processed for the
+        subscription.
+      </p>
+
+      <h2>Comments</h2>
+      <p>
+        Comments use Giscus and GitHub Discussions. The site does not connect to
+        those services until you select <strong>Load comments</strong>. Their
+        handling of account and request data is governed by their own privacy
+        terms.
+      </p>
+
+      <h2>Hosting and external links</h2>
+      <p>
+        The site is hosted on Azure Static Web Apps. Hosting services may
+        process standard request data needed to serve and secure the site. Links
+        to other websites take you to services with their own privacy practices.
+      </p>
+
+      <h2>Questions</h2>
+      <p>
+        For questions about this site's privacy practices, email <a
+          href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a
+        >.
+      </p>
+    </div>
+  </article>
+</BaseLayout>

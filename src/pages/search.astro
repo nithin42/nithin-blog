@@ -1,0 +1,228 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { AUTHOR } from "@/consts";
+import { url } from "@/utils/paths";
+---
+
+<BaseLayout
+  title="Search"
+  description={`Search articles on AI, Azure, cloud architecture, and automation by ${AUTHOR.name}.`}
+  noindex
+>
+  <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <header class="mb-8">
+      <h1
+        class="text-ink-900 text-3xl font-bold tracking-tight text-balance sm:text-4xl dark:text-white"
+      >
+        Search
+      </h1>
+      <p class="text-ink-600 dark:text-ink-300 mt-3 text-lg">
+        Find articles by title, summary, topic, or text within the article.
+      </p>
+    </header>
+
+    <form role="search" data-search-form data-search-endpoint={url('/search.json')}>
+      <label for="search-input" class="sr-only">Search articles</label>
+      <div class="relative">
+        <svg
+          class="text-ink-400 pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m21 21-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"></path>
+        </svg>
+        <input
+          id="search-input"
+          type="search"
+          name="q"
+          autocomplete="off"
+          placeholder="Search for Copilot, Azure, agents…"
+          class="border-ink-300 text-ink-900 placeholder:text-ink-500 focus:border-azure-500 focus:ring-azure-500/30 dark:border-ink-700 dark:bg-ink-900 dark:placeholder:text-ink-400 w-full rounded-xl border bg-white py-3.5 pr-4 pl-12 text-base focus:ring-2 focus:outline-none dark:text-white"
+        />
+      </div>
+    </form>
+
+    <p
+      class="text-ink-500 dark:text-ink-400 mt-6 text-sm"
+      data-search-status
+      aria-live="polite"
+    >
+      Loading search index…
+    </p>
+
+    <div
+      class="divide-ink-200/70 dark:divide-ink-800/70 mt-2 divide-y"
+      data-search-results
+    >
+    </div>
+    <noscript>
+      <p class="text-ink-600 dark:text-ink-300 mt-6 text-sm">
+        Search requires JavaScript. You can still <a
+          href={url('/blog/')}
+          class="text-azure-600 dark:text-azure-400 font-medium hover:underline"
+          >browse every article</a
+        >.
+      </p>
+    </noscript>
+  </div>
+</BaseLayout>
+
+<script>
+  interface Entry {
+    title: string;
+    description: string;
+    tags: string[];
+    url: string;
+    pubDate: string;
+    readingTime: string;
+    content: string;
+  }
+
+  const dateFmt = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+
+  const createElement = <K extends keyof HTMLElementTagNameMap>(
+    tagName: K,
+    className?: string
+  ) => {
+    const element = document.createElement(tagName);
+    if (className) element.className = className;
+    return element;
+  };
+
+  const articleUrl = (value: string) => value;
+
+  function initSearch() {
+    const form = document.querySelector<HTMLFormElement>("[data-search-form]");
+    const input = document.querySelector<HTMLInputElement>("#search-input");
+    const results = document.querySelector<HTMLElement>(
+      "[data-search-results]"
+    );
+    const status = document.querySelector<HTMLElement>("[data-search-status]");
+    if (!form || !input || !results || !status) return;
+    if (form.dataset.bound === "true") return;
+    form.dataset.bound = "true";
+
+    let entries: Entry[] = [];
+
+    form.addEventListener("submit", e => e.preventDefault());
+
+    const updateUrl = (query: string) => {
+      const url = new URL(window.location.href);
+      const value = query.trim();
+      if (value) {
+        url.searchParams.set("q", value);
+      } else {
+        url.searchParams.delete("q");
+      }
+      window.history.replaceState(window.history.state, "", url);
+    };
+
+    const render = (query: string) => {
+      const q = query.trim().toLowerCase();
+      if (!q) {
+        results.replaceChildren();
+        status.textContent = `Start typing to search ${entries.length} articles.`;
+        return;
+      }
+      const matches = entries.filter(entry => {
+        const haystack = [
+          entry.title,
+          entry.description,
+          entry.tags.join(" "),
+          entry.content,
+        ]
+          .join(" ")
+          .toLowerCase();
+        return q.split(/\s+/).every(term => haystack.includes(term));
+      });
+
+      status.textContent = matches.length
+        ? `${matches.length} ${matches.length === 1 ? "result" : "results"} for “${query.trim()}”`
+        : `No results for “${query.trim()}”. Try a different term.`;
+
+      const fragment = document.createDocumentFragment();
+      for (const entry of matches) {
+        const article = createElement("article", "group relative py-5");
+        const metadata = createElement(
+          "div",
+          "flex flex-wrap items-center gap-2 text-xs font-medium text-ink-500 dark:text-ink-400"
+        );
+        const date = createElement("span");
+        date.textContent = dateFmt.format(new Date(entry.pubDate));
+        const separator = createElement("span");
+        separator.setAttribute("aria-hidden", "true");
+        separator.textContent = "·";
+        const readingTime = createElement("span");
+        readingTime.textContent = entry.readingTime;
+        metadata.append(date, separator, readingTime);
+
+        if (entry.tags[0]) {
+          const tagSeparator = separator.cloneNode(true);
+          const tag = createElement(
+            "span",
+            "text-azure-600 dark:text-azure-400"
+          );
+          tag.textContent = entry.tags[0];
+          metadata.append(tagSeparator, tag);
+        }
+
+        const heading = createElement(
+          "h2",
+          "mt-1.5 text-lg font-semibold text-ink-900 transition group-hover:text-azure-600 dark:text-white dark:group-hover:text-azure-400"
+        );
+        const link = createElement("a", "after:absolute after:inset-0");
+        link.href = articleUrl(entry.url);
+        link.textContent = entry.title;
+        heading.append(link);
+
+        const description = createElement(
+          "p",
+          "mt-1 line-clamp-2 text-sm text-ink-600 dark:text-ink-300"
+        );
+        description.textContent = entry.description;
+        article.append(metadata, heading, description);
+        fragment.append(article);
+      }
+      results.replaceChildren(fragment);
+    };
+
+    const endpoint = form.dataset.searchEndpoint || "/search.json";
+
+    fetch(endpoint)
+      .then(r => {
+        if (!r.ok) throw new Error(`Search index returned ${r.status}`);
+        return r.json();
+      })
+      .then((data: Entry[]) => {
+        if (!Array.isArray(data)) throw new Error("Invalid search index");
+        entries = data;
+        const params = new URLSearchParams(window.location.search);
+        const initial = params.get("q") ?? "";
+        if (initial) input.value = initial;
+        render(input.value);
+      })
+      .catch(() => {
+        status.textContent =
+          "Search is unavailable right now. Browse the blog instead.";
+      });
+
+    input.addEventListener("input", () => {
+      updateUrl(input.value);
+      render(input.value);
+    });
+  }
+
+  initSearch();
+  document.addEventListener("astro:after-swap", initSearch);
+</script>

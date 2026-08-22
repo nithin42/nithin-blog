@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-17T20:39:46.104Z",
+  "title": "Design System: Russ Rimmerman Blog",
+  "extensions": {
+    "colorMeta": {
+      "azure-brand": { "role": "primary", "displayName": "Azure Brand", "canonical": "oklch(0.55 0.17 240)", "tonalRamp": ["#082a49", "#0d426d", "#084d83", "#005ba1", "#0078d4", "#3b8ef8", "#60affc", "#93cdff", "#bfe1ff", "#eff8ff"] },
+      "teal-accent": { "role": "secondary", "displayName": "Teal Accent", "canonical": "oklch(0.7 0.14 175)", "tonalRamp": ["#042f2e", "#134e4a", "#115e59", "#0d9488", "#14b8a6", "#2dd4bf", "#5eead4", "#99f6e4", "#ccfbf1", "#f0fdfa"] },
+      "ink-body": { "role": "neutral", "displayName": "Ink Body", "canonical": "oklch(0.22 0.03 240)", "tonalRamp": ["#070d16", "#0d1622", "#172231", "#26374a", "#35485c", "#4a5f76", "#6c8299", "#9fb0c3", "#cad3df", "#f5f7fa"] },
+      "surface-white": { "role": "neutral", "displayName": "Surface White", "canonical": "oklch(1.0 0 0)", "tonalRamp": ["#070d16", "#172231", "#35485c", "#6c8299", "#9fb0c3", "#cad3df", "#e6ebf1", "#f5f7fa", "#fafbfc", "#ffffff"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headlines and page titles." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings and card titles." },
+      "body": { "displayName": "Body", "purpose": "Article content and descriptions." },
+      "label": { "displayName": "Label", "purpose": "Navigation, tags, metadata." },
+      "mono": { "displayName": "Mono", "purpose": "Code blocks and technical references." }
+    },
+    "shadows": [
+      { "name": "hover-lift", "value": "0 20px 45px -20px oklch(0.45 0.12 240 / 0.45)", "purpose": "Hero panel and featured card hover — azure-tinted depth." },
+      { "name": "card-hover", "value": "0 10px 15px -3px oklch(0.55 0.17 240 / 0.05), 0 4px 6px -4px oklch(0.55 0.17 240 / 0.05)", "purpose": "Standard card hover glow." }
+    ],
+    "motion": [
+      { "name": "transition-default", "value": "150ms ease", "purpose": "Color and opacity state changes (links, buttons)." },
+      { "name": "transition-lift", "value": "200ms ease-out", "purpose": "Card hover translate-y lift." },
+      { "name": "duration-image-zoom", "value": "300ms ease", "purpose": "Hero image scale on card hover." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main CTA — newsletter subscribe, 'Explore the latest', primary actions.",
+      "html": "<button class=\"ds-btn-primary\">Explore the latest</button>",
+      "css": ".ds-btn-primary { background: #0078d4; color: #fff; padding: 12px 20px; font-size: 0.875rem; font-weight: 600; font-family: Inter, system-ui, sans-serif; border: none; border-radius: 12px; cursor: pointer; transition: background 150ms ease; } .ds-btn-primary:hover { background: #005ba1; } .ds-btn-primary:focus-visible { outline: 2px solid #3b8ef8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary actions — 'Browse topics', outline style.",
+      "html": "<button class=\"ds-btn-secondary\">Browse topics</button>",
+      "css": ".ds-btn-secondary { background: transparent; color: #26374a; padding: 12px 20px; font-size: 0.875rem; font-weight: 600; font-family: Inter, system-ui, sans-serif; border: 1px solid #cad3df; border-radius: 12px; cursor: pointer; transition: border-color 150ms ease, color 150ms ease; } .ds-btn-secondary:hover { border-color: #60affc; color: #0078d4; } .ds-btn-secondary:focus-visible { outline: 2px solid #3b8ef8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Post Card",
+      "kind": "card",
+      "refersTo": "card-surface",
+      "description": "Blog post card with image, metadata, title, and tags.",
+      "html": "<article class=\"ds-post-card\"><div class=\"ds-post-card__body\"><span class=\"ds-post-card__meta\">Jul 8, 2026 · 5 min read</span><h3 class=\"ds-post-card__title\">Building AI Agents with Azure</h3><p class=\"ds-post-card__desc\">A practical guide to agent orchestration patterns.</p></div></article>",
+      "css": ".ds-post-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 16px; border: 1px solid #cad3df; background: #fff; transition: transform 200ms ease-out, border-color 150ms ease, box-shadow 200ms ease-out; } .ds-post-card:hover { transform: translateY(-4px); border-color: #93cdff; box-shadow: 0 10px 15px -3px rgba(0,120,212,0.05); } .ds-post-card__body { padding: 20px; display: flex; flex-direction: column; gap: 12px; } .ds-post-card__meta { font-size: 0.75rem; font-weight: 500; color: #4a5f76; } .ds-post-card__title { font-size: 1.125rem; font-weight: 600; color: #172231; margin: 0; } .ds-post-card__desc { font-size: 0.875rem; color: #4a5f76; margin: 0; line-height: 1.5; }"
+    },
+    {
+      "name": "Tag Chip",
+      "kind": "chip",
+      "refersTo": "chip-tag",
+      "description": "Topic/tag pills used on cards and topic pages.",
+      "html": "<a class=\"ds-chip\" href=\"#\">Azure</a>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; border: 1px solid #cad3df; background: #fff; color: #4a5f76; font-size: 0.75rem; font-weight: 500; font-family: Inter, system-ui, sans-serif; text-decoration: none; transition: border-color 150ms ease, color 150ms ease; } .ds-chip:hover { border-color: #60affc; color: #0078d4; }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "Search field used in sidebar and search page.",
+      "html": "<div class=\"ds-input-wrap\"><svg class=\"ds-input-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" d=\"m21 21-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z\"/></svg><input class=\"ds-input\" type=\"search\" placeholder=\"Copilot, Azure, agents…\" /></div>",
+      "css": ".ds-input-wrap { position: relative; } .ds-input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #6c8299; pointer-events: none; } .ds-input { width: 100%; padding: 8px 12px 8px 36px; border: 1px solid #9fb0c3; border-radius: 12px; background: #fff; color: #172231; font-size: 0.875rem; font-family: Inter, system-ui, sans-serif; } .ds-input::placeholder { color: #6c8299; } .ds-input:focus { outline: none; border-color: #0078d4; box-shadow: 0 0 0 3px rgba(59,142,248,0.3); }"
+    },
+    {
+      "name": "Navigation Header",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Sticky top navigation with blur backdrop, brand mark, and links.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav__brand\" href=\"#\"><span class=\"ds-nav__mark\">RR</span><span class=\"ds-nav__name\">Russ Rimmerman</span></a><div class=\"ds-nav__links\"><a class=\"ds-nav__link ds-nav__link--active\" href=\"#\">Home</a><a class=\"ds-nav__link\" href=\"#\">Blog</a><a class=\"ds-nav__link\" href=\"#\">Topics</a></div></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 64px; border-bottom: 1px solid rgba(202,211,223,0.7); background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); } .ds-nav__brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 600; color: #172231; } .ds-nav__mark { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #0078d4, #14b8a6); color: #fff; font-size: 0.75rem; font-weight: 700; } .ds-nav__links { display: flex; gap: 4px; } .ds-nav__link { padding: 8px 12px; border-radius: 8px; font-size: 0.875rem; font-weight: 500; color: #4a5f76; text-decoration: none; transition: color 150ms ease; } .ds-nav__link:hover { color: #0078d4; } .ds-nav__link--active { color: #0078d4; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Architect's Notebook",
+    "overview": "This design system embodies structured clarity and field-tested precision. Like a senior architect's personal notebook — organized, deliberate, and built from decades of real experience — the interface communicates authority through restraint, not decoration. Every element earns its place.\n\nThe system rejects corporate stiffness, visual clutter, and generic blandness. It is technically current without being trendy, confident without being loud.\n\nThe Azure brand blue anchors identity without overwhelming — this is a practitioner's platform, not a Microsoft marketing page. The teal accent provides energy at the edges. The deep navy ink grounds everything in seriousness and depth.",
+    "keyCharacteristics": [
+      "Structured information hierarchy with clear visual rhythm",
+      "Confident use of whitespace as a design element",
+      "Technical precision in spacing, alignment, and typography",
+      "Tactile, interactive elements that respond with presence",
+      "Dark and light modes as equally considered first-class experiences"
+    ],
+    "rules": [
+      { "name": "The Cool Neutral Rule", "body": "All neutrals carry a subtle blue undertone from the ink palette. Never warm-tint toward cream, sand, or beige.", "section": "colors" },
+      { "name": "The One Family Rule", "body": "Inter carries the entire typographic load. Differentiation comes from weight and size, not from pairing a second sans. JetBrains Mono is purely functional.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Shadows appear only as a response to state (hover, focus, elevation change).", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Azure blue (#0078d4) exclusively for interactive elements and brand moments — never as a decorative wash.",
+      "Do maintain the cool-neutral temperature across all surfaces.",
+      "Do give cards breathing room — p-5 minimum internal padding, gap-6+ between cards.",
+      "Do use text-wrap: balance on h1–h3 and text-wrap: pretty on prose.",
+      "Do respect prefers-reduced-motion: all animations must have a static fallback.",
+      "Do test every text color against its background for WCAG AA (4.5:1 body, 3:1 large text).",
+      "Do use the bg-grid pattern sparingly — hero sections and empty-state placeholders only."
+    ],
+    "donts": [
+      "Don't use warm neutrals (cream, sand, beige, parchment).",
+      "Don't make the site look corporate or stiff — no stock-photo energy, no whitepaper layouts.",
+      "Don't clutter layouts with competing CTAs, multiple sidebars, or visual noise.",
+      "Don't use gradient text outside the hero's name treatment.",
+      "Don't use border-left or border-right > 1px as a colored accent stripe.",
+      "Don't add glassmorphism as decoration.",
+      "Don't pair a second sans-serif with Inter.",
+      "Don't use arbitrary z-index values."
+    ]
+  }
+}

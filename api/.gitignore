@@ -1,0 +1,7 @@
+# Dependencies
+node_modules/
+
+# Azure Functions
+bin/
+obj/
+local.settings.json

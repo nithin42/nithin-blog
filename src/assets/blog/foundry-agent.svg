@@ -1,0 +1,58 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Microsoft Foundry agent architecture motif">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#111326"/>
+    </linearGradient>
+    <radialGradient id="glowC" cx="0" cy="0" r="1" gradientTransform="translate(600 315) rotate(0) scale(420 300)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7c3aed" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowD" cx="0" cy="0" r="1" gradientTransform="translate(600 315) rotate(0) scale(300 220)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent2" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <pattern id="grid2" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#1c2440" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg2)"/>
+  <rect width="1200" height="630" fill="url(#grid2)" opacity="0.5"/>
+  <rect width="1200" height="630" fill="url(#glowC)"/>
+  <rect width="1200" height="630" fill="url(#glowD)"/>
+
+  <!-- Central agent core -->
+  <g transform="translate(600 315)">
+    <!-- links to tools -->
+    <g stroke="url(#accent2)" stroke-width="2" fill="none">
+      <line x1="0" y1="0" x2="-260" y2="-150" opacity="0.55"/>
+      <line x1="0" y1="0" x2="260" y2="-150" opacity="0.55"/>
+      <line x1="0" y1="0" x2="-300" y2="10" opacity="0.5"/>
+      <line x1="0" y1="0" x2="300" y2="10" opacity="0.5"/>
+      <line x1="0" y1="0" x2="-200" y2="170" opacity="0.45"/>
+      <line x1="0" y1="0" x2="200" y2="170" opacity="0.45"/>
+    </g>
+
+    <!-- core -->
+    <circle r="70" fill="#0d1226" stroke="url(#accent2)" stroke-width="2"/>
+    <circle r="70" fill="none" stroke="#8b5cf6" stroke-width="1" opacity="0.4">
+    </circle>
+    <path d="M-24 -6 a24 24 0 0 1 48 0 a20 20 0 0 1 -14 30 l0 12 -20 0 0 -12 a20 20 0 0 1 -14 -30 z" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="0" cy="-2" r="5" fill="#8b5cf6"/>
+
+    <!-- tool nodes -->
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#9fb0cc" text-anchor="middle">
+      <g transform="translate(-260 -150)"><rect x="-58" y="-22" width="116" height="44" rx="10" fill="#0d1226" stroke="#3b82f6"/><text y="5">model</text></g>
+      <g transform="translate(260 -150)"><rect x="-58" y="-22" width="116" height="44" rx="10" fill="#0d1226" stroke="#22d3ee"/><text y="5">grounding</text></g>
+      <g transform="translate(-300 10)"><rect x="-58" y="-22" width="116" height="44" rx="10" fill="#0d1226" stroke="#8b5cf6"/><text y="5">tools</text></g>
+      <g transform="translate(300 10)"><rect x="-58" y="-22" width="116" height="44" rx="10" fill="#0d1226" stroke="#8b5cf6"/><text y="5">MCP</text></g>
+      <g transform="translate(-200 170)"><rect x="-58" y="-22" width="116" height="44" rx="10" fill="#0d1226" stroke="#3b82f6"/><text y="5">identity</text></g>
+      <g transform="translate(200 170)"><rect x="-58" y="-22" width="116" height="44" rx="10" fill="#0d1226" stroke="#22d3ee"/><text y="5">memory</text></g>
+    </g>
+  </g>
+</svg>

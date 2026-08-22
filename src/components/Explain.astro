@@ -1,0 +1,41 @@
+---
+// Collapsible "Explain why?" callout for tutorials.
+// Usage in MDX:
+//   import Explain from "@/components/Explain.astro";
+//   <Explain title="Why VS Code Insiders?">
+//     Insiders ships the newest Copilot agent features first...
+//   </Explain>
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<details
+  class="not-prose group border-ink-200 bg-ink-50 dark:border-ink-800 dark:bg-ink-900 my-6 rounded-xl border px-4 py-3"
+>
+  <summary
+    class="text-ink-800 dark:text-ink-100 flex cursor-pointer list-none items-center gap-2 font-medium"
+  >
+    <span
+      class="bg-azure-100 text-azure-700 dark:bg-azure-950 dark:text-azure-300 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold tracking-wide uppercase"
+    >
+      Why?
+    </span>
+    <span>{title}</span>
+    <svg
+      class="text-ink-400 ml-auto h-4 w-4 shrink-0 transition-transform group-open:rotate-180"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+        clip-rule="evenodd"></path>
+    </svg>
+  </summary>
+  <div class="text-ink-600 dark:text-ink-300 mt-3 text-sm leading-relaxed">
+    <slot />
+  </div>
+</details>

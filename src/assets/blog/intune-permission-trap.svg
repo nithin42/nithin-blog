@@ -1,0 +1,70 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Intune permission layers motif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#0f1b2e"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientTransform="translate(320 180) rotate(35) scale(360 260)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2f7bff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#2f7bff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientTransform="translate(980 470) rotate(-20) scale(320 240)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f59e0b" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#1c2b44" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.5"/>
+  <rect width="1200" height="630" fill="url(#glowA)"/>
+  <rect width="1200" height="630" fill="url(#glowB)"/>
+
+  <!-- Terminal window: consented scope, still 403 -->
+  <g transform="translate(150 150)">
+    <rect x="0" y="0" width="620" height="330" rx="18" fill="#0d1626" stroke="#22344f" stroke-width="1.5"/>
+    <rect x="0" y="0" width="620" height="48" rx="18" fill="#101d31"/>
+    <rect x="0" y="30" width="620" height="18" fill="#101d31"/>
+    <circle cx="28" cy="24" r="6" fill="#f87171"/>
+    <circle cx="50" cy="24" r="6" fill="#fbbf24"/>
+    <circle cx="72" cy="24" r="6" fill="#34d399"/>
+    <text x="100" y="29" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#5b7196">admin@intune ~</text>
+
+    <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" xml:space="preserve">
+      <tspan x="28" y="92" fill="#5b7196"># scope consented, admin signed in</tspan>
+      <tspan x="28" y="124" fill="#2dd4bf">GET</tspan><tspan fill="#c7d3e6"> /deviceManagement/managedDevices</tspan>
+      <tspan x="28" y="164" fill="#f87171">HTTP 403 — Authorization_RequestDenied</tspan>
+      <tspan x="28" y="192" fill="#5b7196">Insufficient privileges to complete...</tspan>
+      <tspan x="28" y="236" fill="#5b7196"># scope was only half the story</tspan>
+      <tspan x="28" y="268" fill="#7cc4ff">→ missing Intune RBAC role</tspan><tspan fill="#3b82f6"> ▍</tspan>
+    </text>
+  </g>
+
+  <!-- Three permission layers / gates -->
+  <g transform="translate(830 150)" font-family="ui-sans-serif, system-ui, sans-serif">
+    <rect x="0" y="0" width="230" height="80" rx="14" fill="#0d1626" stroke="url(#accent)" stroke-width="2"/>
+    <circle cx="34" cy="40" r="8" fill="#22d3ee"/>
+    <text x="58" y="36" font-size="18" fill="#c7d3e6" font-weight="600">API scope</text>
+    <text x="58" y="58" font-size="13" fill="#5b7196">Graph permission</text>
+
+    <line x1="115" y1="80" x2="115" y2="115" stroke="url(#accent)" stroke-width="2" opacity="0.6"/>
+
+    <rect x="0" y="115" width="230" height="80" rx="14" fill="#0d1626" stroke="#3b82f6" stroke-width="2"/>
+    <circle cx="34" cy="155" r="8" fill="#3b82f6"/>
+    <text x="58" y="151" font-size="18" fill="#c7d3e6" font-weight="600">RBAC role</text>
+    <text x="58" y="173" font-size="13" fill="#5b7196">Intune role</text>
+
+    <line x1="115" y1="195" x2="115" y2="230" stroke="#f59e0b" stroke-width="2" opacity="0.6"/>
+
+    <rect x="0" y="230" width="230" height="80" rx="14" fill="#0d1626" stroke="#f59e0b" stroke-width="2"/>
+    <circle cx="34" cy="270" r="8" fill="#f59e0b"/>
+    <text x="58" y="266" font-size="18" fill="#c7d3e6" font-weight="600">License</text>
+    <text x="58" y="288" font-size="13" fill="#5b7196">Entra ID P2, plans</text>
+  </g>
+</svg>

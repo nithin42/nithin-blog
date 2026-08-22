@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "./FormattedDate.astro";
+import { readingTimeLabel } from "@/utils/readingTime";
+import { url as toUrl } from "@/utils/paths";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, tags } = post.data;
+const url = toUrl(`/blog/${post.id}/`);
+const readTime = readingTimeLabel(post.body);
+const primaryTag = tags[0];
+---
+
+<article class="group relative py-5 first:pt-0 last:pb-0">
+  <div
+    class="text-ink-500 dark:text-ink-400 flex flex-wrap items-center gap-2 text-xs font-medium"
+  >
+    <FormattedDate date={pubDate} />
+    {readTime && <span aria-hidden="true">·</span>}
+    {readTime && <span>{readTime}</span>}
+    {
+      primaryTag && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span class="text-azure-600 dark:text-azure-400">{primaryTag}</span>
+        </>
+      )
+    }
+  </div>
+
+  <h3
+    class="text-ink-900 group-hover:text-azure-600 dark:group-hover:text-azure-400 mt-1.5 text-lg font-semibold transition dark:text-white"
+  >
+    <a href={url} class="after:absolute after:inset-0">{title}</a>
+  </h3>
+
+  <p class="text-ink-600 dark:text-ink-300 mt-1 line-clamp-2 text-sm">
+    {description}
+  </p>
+</article>

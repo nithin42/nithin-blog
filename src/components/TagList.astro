@@ -1,0 +1,48 @@
+---
+import { url } from "@/utils/paths";
+
+interface Props {
+  tags: string[];
+  class?: string;
+  /** Cap the number of chips rendered; the remainder collapses into a "+N" badge. */
+  max?: number;
+}
+const { tags, class: className, max } = Astro.props;
+
+const slugify = (tag: string) =>
+  tag
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const visible = typeof max === "number" ? tags.slice(0, max) : tags;
+const overflow = tags.length - visible.length;
+---
+
+{
+  tags.length > 0 && (
+    <ul class:list={["flex flex-wrap gap-2", className]}>
+      {visible.map(tag => (
+        <li>
+          <a
+            href={url(`/tags/${slugify(tag)}/`)}
+            class="border-azure-200 bg-azure-50 text-azure-700 hover:border-azure-400 hover:bg-azure-100 dark:border-ink-700 dark:bg-ink-800 dark:text-azure-300 dark:hover:border-azure-500 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition"
+          >
+            {tag}
+          </a>
+        </li>
+      ))}
+      {overflow > 0 && (
+        <li>
+          <span
+            class="border-ink-200 text-ink-500 dark:border-ink-700 dark:text-ink-400 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium"
+            title={tags.slice(visible.length).join(", ")}
+          >
+            +{overflow}
+          </span>
+        </li>
+      )}
+    </ul>
+  )
+}

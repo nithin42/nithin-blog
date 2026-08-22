@@ -1,0 +1,30 @@
+---
+import { slugify } from "@/utils/tags";
+import { url } from "@/utils/paths";
+
+interface Props {
+  tags: { tag: string; count: number }[];
+  class?: string;
+}
+const { tags, class: className } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <ul class:list={["flex flex-wrap gap-2", className]}>
+      {tags.map(({ tag, count }) => (
+        <li>
+          <a
+            href={url(`/tags/${slugify(tag)}/`)}
+            class="border-ink-200 text-ink-700 hover:border-azure-400 hover:text-azure-600 dark:border-ink-800 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-azure-500 dark:hover:text-azure-400 group inline-flex items-center gap-1.5 rounded-full border bg-white py-1.5 pr-2 pl-3 text-sm font-medium transition"
+          >
+            {tag}
+            <span class="bg-ink-100 text-ink-500 group-hover:bg-azure-100 group-hover:text-azure-700 dark:bg-ink-800 dark:text-ink-400 dark:group-hover:bg-ink-700 rounded-full px-1.5 py-0.5 text-xs tabular-nums transition">
+              {count}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

@@ -1,0 +1,67 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Azure AI Foundry deployment motif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#0f1b2e"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientTransform="translate(320 180) rotate(35) scale(360 260)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2f7bff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#2f7bff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientTransform="translate(980 470) rotate(-20) scale(320 240)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2dd4bf" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#1c2b44" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.5"/>
+  <rect width="1200" height="630" fill="url(#glowA)"/>
+  <rect width="1200" height="630" fill="url(#glowB)"/>
+
+  <!-- Terminal window -->
+  <g transform="translate(150 150)">
+    <rect x="0" y="0" width="620" height="330" rx="18" fill="#0d1626" stroke="#22344f" stroke-width="1.5"/>
+    <rect x="0" y="0" width="620" height="48" rx="18" fill="#101d31"/>
+    <rect x="0" y="30" width="620" height="18" fill="#101d31"/>
+    <circle cx="28" cy="24" r="6" fill="#f87171"/>
+    <circle cx="50" cy="24" r="6" fill="#fbbf24"/>
+    <circle cx="72" cy="24" r="6" fill="#34d399"/>
+    <text x="100" y="29" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#5b7196">architect@azure ~</text>
+
+    <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" xml:space="preserve">
+      <tspan x="28" y="92" fill="#5b7196"># provision an Azure AI Foundry resource</tspan>
+      <tspan x="28" y="124" fill="#2dd4bf">az</tspan><tspan fill="#c7d3e6"> cognitiveservices account create \</tspan>
+      <tspan x="48" y="152" fill="#c7d3e6">--kind </tspan><tspan fill="#7cc4ff">AIServices</tspan>
+      <tspan x="48" y="180" fill="#c7d3e6">--sku </tspan><tspan fill="#7cc4ff">S0</tspan>
+      <tspan x="48" y="208" fill="#c7d3e6">--assign-identity</tspan>
+      <tspan x="28" y="248" fill="#5b7196">✓ deploy a current GPT model</tspan>
+      <tspan x="28" y="276" fill="#5b7196">✓ call it keyless with Entra ID</tspan>
+      <tspan x="28" y="304" fill="#7cc4ff">→ ready</tspan><tspan fill="#3b82f6"> ▍</tspan>
+    </text>
+  </g>
+
+  <!-- Node / model graph -->
+  <g transform="translate(820 140)" stroke-width="2" fill="none">
+    <line x1="120" y1="60" x2="40" y2="180" stroke="url(#accent)" opacity="0.6"/>
+    <line x1="120" y1="60" x2="220" y2="170" stroke="url(#accent)" opacity="0.6"/>
+    <line x1="120" y1="60" x2="120" y2="300" stroke="url(#accent)" opacity="0.5"/>
+    <line x1="40" y1="180" x2="120" y2="300" stroke="url(#accent)" opacity="0.4"/>
+    <line x1="220" y1="170" x2="120" y2="300" stroke="url(#accent)" opacity="0.4"/>
+    <circle cx="120" cy="60" r="26" fill="#0d1626" stroke="url(#accent)"/>
+    <circle cx="120" cy="60" r="8" fill="#22d3ee"/>
+    <circle cx="40" cy="180" r="18" fill="#0d1626" stroke="#3b82f6"/>
+    <circle cx="40" cy="180" r="6" fill="#3b82f6"/>
+    <circle cx="220" cy="170" r="18" fill="#0d1626" stroke="#3b82f6"/>
+    <circle cx="220" cy="170" r="6" fill="#3b82f6"/>
+    <circle cx="120" cy="300" r="22" fill="#0d1626" stroke="#2dd4bf"/>
+    <circle cx="120" cy="300" r="7" fill="#2dd4bf"/>
+  </g>
+</svg>

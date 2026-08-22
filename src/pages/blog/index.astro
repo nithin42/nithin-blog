@@ -1,0 +1,44 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+
+import { AUTHOR } from "@/consts";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<BaseLayout
+  title="Blog"
+  description={`Articles on Azure, AI, security, and cloud architecture by ${AUTHOR.name}.`}
+>
+  <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <header class="mb-10">
+      <h1
+        class="text-ink-900 text-3xl font-bold tracking-tight text-balance sm:text-4xl dark:text-white"
+      >
+        Blog
+      </h1>
+      <p class="text-ink-600 dark:text-ink-300 mt-3 max-w-2xl text-lg">
+        The latest learnings from the field — Azure architecture, AI, security,
+        and cloud engineering.
+      </p>
+    </header>
+
+    {
+      posts.length === 0 ? (
+        <p class="text-ink-500 dark:text-ink-400">
+          No posts yet — check back soon.
+        </p>
+      ) : (
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map(post => (
+            <PostCard post={post} headingLevel={2} />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

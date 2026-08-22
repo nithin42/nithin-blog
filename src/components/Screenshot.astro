@@ -1,0 +1,42 @@
+---
+// Framed product screenshot with an optional caption, for use in MDX.
+// Usage:
+//   import Screenshot from "@/components/Screenshot.astro";
+//   import dashboard from "@/assets/projects/portal-of-portals/dashboard.png";
+//   <Screenshot src={dashboard} alt="Portal 360 home dashboard" caption="The Portal 360 dashboard." />
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+}
+
+const { src, alt, caption } = Astro.props;
+const widths = [480, 768, 1024, 1440, src.width].filter(
+  (w, i, arr) => w <= src.width && arr.indexOf(w) === i
+);
+---
+
+<figure class="not-prose my-8">
+  <div
+    class="border-ink-200 bg-ink-100 dark:border-ink-800 dark:bg-ink-900 overflow-hidden rounded-xl border shadow-sm ring-1 ring-black/5 dark:ring-white/5"
+  >
+    <Image
+      src={src}
+      alt={alt}
+      widths={widths}
+      sizes="(min-width: 1024px) 768px, 100vw"
+      loading="lazy"
+      class="h-auto w-full"
+    />
+  </div>
+  {
+    caption && (
+      <figcaption class="text-ink-500 dark:text-ink-400 mt-3 text-center text-sm leading-relaxed">
+        {caption}
+      </figcaption>
+    )
+  }
+</figure>

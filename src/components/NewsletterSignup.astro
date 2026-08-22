@@ -1,0 +1,205 @@
+---
+// Newsletter signup — posts to the Azure Static Web Apps managed API function
+// at /api/subscribe, which forwards to the configured provider (Buttondown or
+// Mailchimp). The provider API key stays server-side; see api/src/functions/
+// subscribe.js. Until a provider is configured the endpoint returns a friendly
+// "not available yet" message rather than silently dropping the signup.
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<div
+  data-newsletter-container
+  class:list={[
+    "border-ink-200 from-azure-50 dark:border-ink-800 dark:from-ink-900 dark:to-ink-950 rounded-2xl border bg-gradient-to-br to-white p-6 sm:p-8",
+    compact ? "" : "text-center",
+  ]}
+>
+  <h2 class="text-ink-900 text-xl font-semibold dark:text-white">
+    Get the latest learnings
+  </h2>
+  <p class="text-ink-600 dark:text-ink-300 mt-2 text-sm">
+    Occasional notes on Azure, AI, and cloud architecture. No spam, unsubscribe
+    anytime.
+  </p>
+
+  <form
+    class:list={[
+      "mt-5 flex flex-col gap-3 sm:flex-row",
+      compact ? "" : "sm:mx-auto sm:max-w-md",
+    ]}
+    data-newsletter
+    novalidate
+  >
+    <label for="newsletter-email" class="sr-only">Email address</label>
+    <input
+      id="newsletter-email"
+      name="email"
+      type="email"
+      required
+      autocomplete="email"
+      autocapitalize="none"
+      inputmode="email"
+      spellcheck="false"
+      aria-describedby="newsletter-note"
+      placeholder="you@example.com"
+      class="border-ink-300 text-ink-900 placeholder:text-ink-500 focus:border-azure-500 focus:ring-azure-500/30 dark:border-ink-700 dark:bg-ink-900 dark:placeholder:text-ink-400 w-full flex-1 rounded-lg border bg-white px-4 py-2.5 text-sm focus:ring-2 focus:outline-none dark:text-white"
+    />
+    {/* Honeypot: hidden from users, catches bots. */}
+    <div class="hidden" aria-hidden="true">
+      <label for="newsletter-website">Leave this field empty</label>
+      <input
+        id="newsletter-website"
+        name="website"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+      />
+    </div>
+    <button
+      type="submit"
+      data-newsletter-submit
+      class="bg-azure-600 hover:bg-azure-700 focus:ring-azure-500/40 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      Subscribe
+    </button>
+  </form>
+  <p
+    data-newsletter-note
+    id="newsletter-note"
+    class="text-ink-500 dark:text-ink-400 mt-3 text-xs"
+    role="status"
+    aria-live="polite"
+  >
+  </p>
+</div>
+
+<script>
+  interface NewsletterResponse {
+    available?: boolean;
+    message?: string;
+    ok?: boolean;
+  }
+
+  function initNewsletter() {
+    document
+      .querySelectorAll<HTMLFormElement>("form[data-newsletter]")
+      .forEach(form => {
+        if (form.dataset.bound === "true") return;
+        form.dataset.bound = "true";
+
+        const wrapper = form.parentElement;
+        const note = wrapper?.querySelector<HTMLElement>(
+          "[data-newsletter-note]"
+        );
+        const submit = form.querySelector<HTMLButtonElement>(
+          "[data-newsletter-submit]"
+        );
+        const emailInput = form.querySelector<HTMLInputElement>(
+          'input[name="email"]'
+        );
+        if (!note || !submit || !emailInput) return;
+
+        const setNote = (
+          message: string,
+          tone: "success" | "error" | "unavailable" | null
+        ) => {
+          note.textContent = message;
+          note.classList.remove(
+            "text-emerald-600",
+            "text-red-600",
+            "text-amber-700",
+            "dark:text-amber-400"
+          );
+          if (tone === "success") note.classList.add("text-emerald-600");
+          if (tone === "error") note.classList.add("text-red-600");
+          if (tone === "unavailable") {
+            note.classList.add("text-amber-700", "dark:text-amber-400");
+          }
+        };
+
+        const localPreview = ["localhost", "127.0.0.1"].includes(
+          window.location.hostname
+        );
+        if (!localPreview) {
+          fetch("/api/subscribe", {
+            headers: { Accept: "application/json" },
+          })
+            .then(res => (res.ok ? res.json() : null))
+            .then((data: NewsletterResponse | null) => {
+              if (!data || data.available !== false) return;
+              emailInput.disabled = true;
+              submit.disabled = true;
+              setNote(
+                data.message ||
+                  "Newsletter sign-up isn't available yet — check back soon.",
+                "unavailable"
+              );
+            })
+            .catch(() => {
+              // Submission still surfaces a useful error if the API is unavailable.
+            });
+        }
+
+        form.addEventListener("submit", async e => {
+          e.preventDefault();
+
+          const email = emailInput.value.trim();
+          if (!emailInput.checkValidity() || !email) {
+            setNote("Please enter a valid email address.", "error");
+            emailInput.setAttribute("aria-invalid", "true");
+            emailInput.focus();
+            return;
+          }
+          emailInput.removeAttribute("aria-invalid");
+
+          submit.disabled = true;
+          const originalLabel = submit.textContent;
+          submit.textContent = "Subscribing…";
+          setNote("Subscribing…", null);
+
+          try {
+            const res = await fetch("/api/subscribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email,
+                website:
+                  form.querySelector<HTMLInputElement>('input[name="website"]')
+                    ?.value || "",
+              }),
+            });
+
+            let data: NewsletterResponse = {};
+            try {
+              data = await res.json();
+            } catch {
+              /* non-JSON response */
+            }
+
+            if (res.ok && data.ok) {
+              setNote(data.message || "You're subscribed. Thanks!", "success");
+              form.reset();
+            } else {
+              setNote(
+                data.message || "Something went wrong. Please try again later.",
+                "error"
+              );
+            }
+          } catch {
+            setNote(
+              "Couldn't reach the server. Please try again later.",
+              "error"
+            );
+          } finally {
+            submit.disabled = false;
+            submit.textContent = originalLabel;
+          }
+        });
+      });
+  }
+  initNewsletter();
+  document.addEventListener("astro:after-swap", initNewsletter);
+</script>

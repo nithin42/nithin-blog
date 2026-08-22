@@ -1,0 +1,46 @@
+{
+  "name": "nithin-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal blog and portfolio of Nithin, Cloud & AI Solutions Architect.",
+  "author": "Nithin",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev --host",
+    "start": "astro dev --host",
+    "build": "astro check && astro build",
+    "check:site": "node scripts/check-site.mjs",
+    "check:lockfiles": "node scripts/check-lockfiles.mjs",
+    "test": "npm run check:lockfiles && npm run build && npm run check:site",
+    "preview": "astro preview --host",
+    "astro": "astro",
+    "hero": "node --env-file-if-exists=.env.local --env-file-if-exists=.env scripts/generate-hero.mjs",
+    "figures": "node --env-file-if-exists=.env.local --env-file-if-exists=.env scripts/generate-figures.mjs",
+    "format": "prettier --write src scripts .github/workflows astro.config.mjs package.json tsconfig.json public/site.webmanifest"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^7.0.4",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.1.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@azure/identity": "^4.13.1",
+    "@shikijs/transformers": "^4.3.1",
+    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.1.7",
+    "prettier": "^3.5.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "reading-time": "^1.5.0",
+    "sharp": "^0.35.3",
+    "tailwindcss": "^4.1.7",
+    "typescript": "^5.8.3"
+  }
+}

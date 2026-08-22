@@ -1,0 +1,124 @@
+---
+// Inline "hover to define" tooltip for jargon and acronyms, so a non-coder
+// reader can hover (or tap/focus) any technical term and get a plain-language
+// explanation without leaving the sentence.
+//
+// Usage in MDX:
+//   import Term from "@/components/Term.astro";
+//   You'll <Term def="Automatically generating the starter files and folder
+//   structure for a project so you don't build it by hand.">scaffold</Term> a
+//   home for your agents.
+//
+// The word between the tags is what the reader sees; `def` is the tooltip text.
+interface Props {
+  /** Plain-language definition shown in the tooltip. */
+  def: string;
+}
+const { def } = Astro.props;
+const id = `term-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<span class="term group not-prose relative inline-block" data-term>
+  <button
+    type="button"
+    aria-describedby={id}
+    data-term-trigger
+    class="decoration-azure-500/60 hover:decoration-azure-500 focus-visible:decoration-azure-500 cursor-help border-0 bg-transparent p-0 font-[inherit] text-[inherit] underline decoration-dotted underline-offset-4 transition-colors focus-visible:outline-none"
+  >
+    <slot />
+  </button>
+  <span
+    id={id}
+    role="tooltip"
+    class="term-tooltip border-ink-200 text-ink-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 absolute bottom-full left-1/2 z-20 mb-2 w-64 max-w-[80vw] -translate-x-1/2 rounded-lg border bg-white px-3 py-2 text-left text-sm leading-relaxed font-normal not-italic opacity-0 shadow-lg transition-opacity duration-150"
+  >
+    {def}
+    <span
+      class="border-ink-200 dark:border-ink-700 dark:bg-ink-900 absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 border-r border-b bg-white"
+    ></span>
+  </span>
+</span>
+
+<style>
+  .term-tooltip {
+    pointer-events: none;
+  }
+
+  .term:not([data-dismissed="true"]):hover .term-tooltip,
+  .term:not([data-dismissed="true"]):focus-within .term-tooltip {
+    pointer-events: auto;
+    opacity: 1;
+  }
+</style>
+
+<script>
+  interface TermState {
+    activeTerm: HTMLElement | null;
+  }
+
+  const runtime = window as Window & { __rrTermState?: TermState };
+  if (!runtime.__rrTermState) {
+    const state: TermState = { activeTerm: null };
+    runtime.__rrTermState = state;
+
+    document.addEventListener("keydown", event => {
+      if (event.key !== "Escape") return;
+
+      const focusedTerm =
+        event.target instanceof Element
+          ? event.target.closest<HTMLElement>("[data-term]")
+          : null;
+      const term = focusedTerm ?? state.activeTerm;
+      if (!term) return;
+
+      term.dataset.dismissed = "true";
+      state.activeTerm = null;
+      event.stopPropagation();
+    });
+
+    const restoreTooltip = (event: Event) => {
+      if (!(event.target instanceof Element)) return;
+      const term = event.target.closest<HTMLElement>("[data-term]");
+      if (!term) return;
+      if (
+        event instanceof PointerEvent &&
+        event.relatedTarget instanceof Node &&
+        term.contains(event.relatedTarget)
+      ) {
+        return;
+      }
+
+      term.removeAttribute("data-dismissed");
+      state.activeTerm = term;
+    };
+
+    document.addEventListener("focusin", restoreTooltip);
+    document.addEventListener("pointerover", restoreTooltip);
+    document.addEventListener("pointerout", event => {
+      if (
+        state.activeTerm &&
+        !(
+          event.relatedTarget instanceof Node &&
+          state.activeTerm.contains(event.relatedTarget)
+        ) &&
+        !state.activeTerm.contains(document.activeElement)
+      ) {
+        state.activeTerm = null;
+      }
+    });
+    document.addEventListener("focusout", () => {
+      queueMicrotask(() => {
+        if (
+          state.activeTerm &&
+          !state.activeTerm.matches(":hover") &&
+          !state.activeTerm.contains(document.activeElement)
+        ) {
+          state.activeTerm = null;
+        }
+      });
+    });
+    document.addEventListener("astro:before-swap", () => {
+      state.activeTerm = null;
+    });
+  }
+</script>

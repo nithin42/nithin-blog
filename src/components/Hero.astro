@@ -1,0 +1,71 @@
+---
+import { AUTHOR, SITE_TAGLINE } from '@/consts'
+import { url } from '@/utils/paths'
+
+interface Props {
+  /** Curated topic chips linking into real tag pages. */
+  topics?: { label: string; href: string }[];
+}
+
+const { topics = [] } = Astro.props;
+const displayTopics = topics.slice(0, 4);
+---
+
+<section class="relative overflow-hidden">
+  <div class="bg-grid absolute inset-0 -z-10 opacity-60"></div>
+  <div
+    class="bg-azure-500/15 dark:bg-azure-600/15 absolute -top-32 left-1/3 -z-10 h-80 w-[40rem] -translate-x-1/2 rounded-full blur-3xl"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+    <h1
+      class="text-ink-900 max-w-3xl text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl dark:text-white"
+    >
+      Where I share what I learn, to{" "}
+      <span class="text-azure-600 dark:text-azure-400">help you</span>
+    </h1>
+
+    <p
+      class="text-ink-600 dark:text-ink-300 mt-5 max-w-2xl text-lg text-pretty sm:leading-relaxed"
+    >
+      Field-tested guidance on cloud, AI Foundry, and multi-agent architectures —
+      written by {AUTHOR.name}, {AUTHOR.role || SITE_TAGLINE}.
+    </p>
+
+    <div class="mt-7 flex flex-wrap items-center gap-3">
+      <a
+        href={url('/blog/')}
+        class="bg-azure-600 hover:bg-azure-700 focus-visible:ring-azure-500/40 rounded-lg px-6 py-3 text-sm font-semibold text-white transition focus-visible:ring-2"
+      >
+        Read the latest
+      </a>
+      <a
+        href={url('/topics/')}
+        class="border-ink-300 text-ink-700 hover:border-azure-400 hover:text-azure-600 dark:border-ink-700 dark:text-ink-200 dark:hover:border-azure-500 dark:hover:text-azure-400 rounded-lg border px-6 py-3 text-sm font-semibold transition"
+      >
+        Browse by topic
+      </a>
+    </div>
+
+    {
+      displayTopics.length > 0 && (
+        <nav class="mt-7" aria-label="Popular topics">
+          <ul class="flex flex-wrap gap-2">
+            {displayTopics.map(topic => (
+              <li>
+                <a
+                  href={url(topic.href)}
+                  class="border-ink-200 text-ink-600 hover:border-azure-400 hover:text-azure-600 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-300 dark:hover:border-azure-500 dark:hover:text-azure-400 inline-flex items-center rounded-full border bg-white px-4 py-2.5 text-sm font-medium transition sm:px-3.5 sm:py-1.5"
+                >
+                  {topic.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,159 @@
+---
+// Inline SVG diagram figure. `Figure.astro` renders raster artwork through
+// astro:assets; this injects the SVG straight into the page instead, so the
+// labels stay real text: crisp at any zoom, selectable, searchable, and able
+// to follow the site's light/dark theme. Raster diagrams can do none of that.
+//
+// Usage in MDX:
+//   import Diagram from "@/components/Diagram.astro";
+//   import loop from "@/assets/blog/my-post/figure-loop.svg?raw";
+//   <Diagram svg={loop} caption="How the loop closes." />
+//
+// The SVG owns its own <title>/<desc> for assistive tech, and styles itself
+// with the `sd-` class vocabulary defined below.
+interface Props {
+  svg: string;
+  caption?: string;
+}
+
+const { svg, caption } = Astro.props;
+---
+
+<figure class="not-prose my-8">
+  <div
+    class="border-ink-200 dark:border-ink-800 overflow-x-auto rounded-xl border p-4"
+  >
+    <Fragment set:html={svg} />
+  </div>
+  {
+    caption && (
+      <figcaption class="text-ink-500 dark:text-ink-400 mt-3 text-center text-sm leading-relaxed">
+        {caption}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style is:global>
+  /* Injected markup can't carry Astro's scope hash, so these are global and
+     namespaced under .sd-root instead. */
+  .sd-root {
+    --sd-panel: #f5f7fa;
+    --sd-line: #cad3df;
+    --sd-card: #ffffff;
+    --sd-title: #0d1622;
+    --sd-body: #35485c;
+    --sd-muted: #4a5f76;
+    --sd-rule: #9fb0c3;
+
+    --sd-c-blue: #0069bd;
+    --sd-bg-blue: #eff8ff;
+    --sd-c-teal: #0f766e;
+    --sd-bg-teal: #ecfdf5;
+    --sd-c-purple: #6d28d9;
+    --sd-bg-purple: #f5f3ff;
+    --sd-c-amber: #b45309;
+    --sd-bg-amber: #fffbeb;
+    --sd-c-red: #c81e1e;
+    --sd-bg-red: #fef2f2;
+    --sd-c-green: #15803d;
+    --sd-bg-green: #f0fdf4;
+
+    display: block;
+    width: 100%;
+    /* Dense diagrams stay legible on narrow screens; the wrapper scrolls. */
+    min-width: 33rem;
+    height: auto;
+    font-family: inherit;
+  }
+
+  html.dark .sd-root {
+    --sd-panel: #0c1522;
+    --sd-line: #26374a;
+    --sd-card: #101c2c;
+    --sd-title: #e6ebf1;
+    --sd-body: #9fb0c3;
+    --sd-muted: #6c8299;
+    --sd-rule: #35485c;
+
+    --sd-c-blue: #60affc;
+    --sd-bg-blue: #0d2137;
+    --sd-c-teal: #2dd4bf;
+    --sd-bg-teal: #0a2420;
+    --sd-c-purple: #a78bfa;
+    --sd-bg-purple: #1c1633;
+    --sd-c-amber: #fbbf24;
+    --sd-bg-amber: #2a1f07;
+    --sd-c-red: #f87171;
+    --sd-bg-red: #2b1113;
+    --sd-c-green: #4ade80;
+    --sd-bg-green: #0b2417;
+  }
+
+  .sd-root .sd-panel {
+    fill: var(--sd-panel);
+    stroke: var(--sd-line);
+  }
+  .sd-root .sd-card {
+    fill: var(--sd-card);
+    stroke: var(--sd-line);
+  }
+  .sd-root .sd-rule {
+    stroke: var(--sd-rule);
+    fill: none;
+  }
+  .sd-root .sd-arrowhead {
+    fill: var(--sd-rule);
+  }
+  .sd-root .sd-title {
+    fill: var(--sd-title);
+  }
+  .sd-root .sd-body {
+    fill: var(--sd-body);
+  }
+  .sd-root .sd-muted {
+    fill: var(--sd-muted);
+  }
+
+  /* Accent scope: set once on a group, consumed by the classes underneath. */
+  .sd-root .sd-blue {
+    --sd-accent: var(--sd-c-blue);
+    --sd-accent-bg: var(--sd-bg-blue);
+  }
+  .sd-root .sd-teal {
+    --sd-accent: var(--sd-c-teal);
+    --sd-accent-bg: var(--sd-bg-teal);
+  }
+  .sd-root .sd-purple {
+    --sd-accent: var(--sd-c-purple);
+    --sd-accent-bg: var(--sd-bg-purple);
+  }
+  .sd-root .sd-amber {
+    --sd-accent: var(--sd-c-amber);
+    --sd-accent-bg: var(--sd-bg-amber);
+  }
+  .sd-root .sd-red {
+    --sd-accent: var(--sd-c-red);
+    --sd-accent-bg: var(--sd-bg-red);
+  }
+  .sd-root .sd-green {
+    --sd-accent: var(--sd-c-green);
+    --sd-accent-bg: var(--sd-bg-green);
+  }
+
+  .sd-root .sd-tint {
+    fill: var(--sd-accent-bg);
+    stroke: var(--sd-accent);
+  }
+  .sd-root .sd-fill {
+    fill: var(--sd-accent);
+  }
+  .sd-root .sd-stroke {
+    stroke: var(--sd-accent);
+    fill: none;
+  }
+  /* Numerals sitting on a filled accent badge. */
+  .sd-root .sd-onfill {
+    fill: var(--sd-panel);
+  }
+</style>

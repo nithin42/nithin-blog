@@ -1,0 +1,73 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import FormattedDate from "./FormattedDate.astro";
+import TagList from "./TagList.astro";
+import { readingTimeLabel } from "@/utils/readingTime";
+import { url as toUrl } from "@/utils/paths";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  headingLevel?: 2 | 3;
+}
+const { post } = Astro.props;
+const { headingLevel = 3 } = Astro.props;
+const { title, description, pubDate, heroImage, tags } = post.data;
+const url = toUrl(`/blog/${post.id}/`);
+const readTime = readingTimeLabel(post.body);
+const Heading = headingLevel === 2 ? "h2" : "h3";
+---
+
+<article
+  class="group border-ink-200 hover:border-azure-300 hover:shadow-azure-500/5 dark:border-ink-800 dark:bg-ink-900 dark:hover:border-azure-700 relative flex flex-col overflow-hidden rounded-2xl border bg-white transition hover:-translate-y-1 hover:shadow-lg"
+>
+  {
+    heroImage ? (
+      <a
+        href={url}
+        class="block overflow-hidden"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        <Image
+          src={heroImage}
+          alt=""
+          widths={[320, 480, 800]}
+          sizes="(min-width: 1024px) 320px, (min-width: 640px) 50vw, 100vw"
+          loading="lazy"
+          decoding="async"
+          class="aspect-[16/9] w-full object-cover transition duration-300 group-hover:scale-105"
+        />
+      </a>
+    ) : (
+      <a
+        href={url}
+        tabindex="-1"
+        aria-hidden="true"
+        class="bg-grid from-azure-50 dark:from-ink-950 dark:to-ink-900 relative flex aspect-[16/9] items-center justify-center overflow-hidden bg-gradient-to-br to-teal-50"
+      >
+        <span class="text-azure-600/30 dark:text-azure-400/30 font-mono text-4xl font-bold transition duration-300 group-hover:scale-105">
+          {"</>"}
+        </span>
+      </a>
+    )
+  }
+  <div class="flex flex-1 flex-col gap-3 p-5">
+    <div
+      class="text-ink-500 dark:text-ink-400 flex items-center gap-2 text-xs font-medium"
+    >
+      <FormattedDate date={pubDate} />
+      {readTime && <span aria-hidden="true">·</span>}
+      {readTime && <span>{readTime}</span>}
+    </div>
+    <Heading class="text-ink-900 text-lg font-semibold dark:text-white">
+      <a href={url} class="after:absolute after:inset-0">{title}</a>
+    </Heading>
+    <div class="flex-1">
+      <p class="text-ink-600 dark:text-ink-300 line-clamp-3 text-sm">
+        {description}
+      </p>
+    </div>
+    <TagList tags={tags} max={3} class="relative z-10 mt-1" />
+  </div>
+</article>

@@ -1,0 +1,326 @@
+---
+import { NAV_LINKS, SITE_TAGLINE, SITE_TITLE, SOCIALS } from "@/consts";
+import ThemeToggle from "./ThemeToggle.astro";
+import { Image } from "astro:assets";
+import headshot from "@/assets/author/headshot.jpg";
+import { url } from "@/utils/paths";
+
+const pathname = Astro.url.pathname;
+const isActive = (href: string) => {
+  const target = url(href);
+  return target === url('/') ? pathname === target || pathname === target.slice(0, -1) : pathname.startsWith(target);
+};
+---
+
+<header
+  class="border-ink-200/70 dark:border-ink-800/70 dark:bg-ink-950/80 sticky top-0 z-40 border-b bg-white/80 backdrop-blur-md"
+>
+  <nav
+    class="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6"
+    aria-label="Primary"
+  >
+    <a
+      href={url('/')}
+      aria-label={`${SITE_TITLE} home`}
+      class="group text-ink-900 inline-flex shrink-0 items-center gap-2 rounded-lg font-semibold dark:text-white"
+    >
+      <Image
+        src={headshot}
+        alt=""
+        widths={[40, 80]}
+        sizes="40px"
+        aria-hidden="true"
+        class="border-ink-200 group-hover:border-azure-300 dark:border-ink-700 dark:group-hover:border-azure-600 h-10 w-10 shrink-0 rounded-xl border bg-white object-cover shadow-sm transition"
+      />
+      <span class="hidden flex-col whitespace-nowrap sm:flex">
+        <span class="leading-tight">{SITE_TITLE}</span>
+        <span
+          class="text-ink-500 dark:text-ink-400 text-xs leading-tight font-normal"
+        >
+          {SITE_TAGLINE}
+        </span>
+      </span>
+    </a>
+
+    <div class="flex shrink-0 items-center gap-1 sm:gap-2">
+      <ul class="hidden items-center gap-1 lg:flex">
+        {
+          NAV_LINKS.map(link => (
+            <li>
+              <a
+                href={url(link.href)}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                class:list={[
+                  "rounded-lg px-3 py-2 text-sm font-medium transition",
+                  isActive(link.href)
+                    ? "text-azure-600 dark:text-azure-400"
+                    : "text-ink-600 hover:text-azure-600 dark:text-ink-300 dark:hover:text-azure-400",
+                ]}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        SOCIALS.github && (
+          <a
+            href={SOCIALS.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            class="text-ink-600 hover:bg-ink-50 hover:text-azure-600 dark:text-ink-300 dark:hover:bg-ink-900 dark:hover:text-azure-400 hidden h-10 w-10 items-center justify-center rounded-lg transition sm:inline-flex"
+          >
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.48l-.01-1.7c-2.78.62-3.37-1.37-3.37-1.37-.46-1.18-1.11-1.5-1.11-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.35 9.35 0 015 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.79-4.57 5.04.36.32.68.94.68 1.9l-.01 2.82c0 .27.18.59.69.48A10.02 10.02 0 0022 12.25C22 6.58 17.52 2 12 2z"
+              />
+            </svg>
+          </a>
+        )
+      }
+
+      {
+        SOCIALS.linkedin && (
+          <a
+            href={SOCIALS.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            class="text-ink-600 hover:bg-ink-50 hover:text-azure-600 dark:text-ink-300 dark:hover:bg-ink-900 dark:hover:text-azure-400 hidden h-10 w-10 items-center justify-center rounded-lg transition sm:inline-flex"
+          >
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4.98 3.5A2.5 2.5 0 100 3.51 2.5 2.5 0 004.98 3.5zM.24 8.02h4.5V24H.24V8.02zM8.24 8.02h4.31v2.18h.06c.6-1.14 2.07-2.34 4.26-2.34C21.6 7.86 24 10.1 24 14.6V24h-4.5v-8.3c0-1.98-.04-4.52-2.76-4.52-2.76 0-3.18 2.16-3.18 4.38V24H8.24V8.02z" />
+            </svg>
+          </a>
+        )
+      }
+
+      {
+        SOCIALS.buymeacoffee && (
+          <a
+            href={SOCIALS.buymeacoffee}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Buy me a coffee"
+            title="Buy me a coffee"
+            class="hidden h-10 w-10 items-center justify-center rounded-lg bg-[#FFDD00] text-black shadow-sm transition hover:brightness-95 focus-visible:ring-2 focus-visible:ring-[#FFDD00]/50 xl:inline-flex"
+          >
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M4 8h13a2 2 0 0 1 2 2 4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8z"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M19 9h1.5a2.5 2.5 0 0 1 0 5H18"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+              <path
+                d="M6 18h11"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+              <path
+                d="M9 2.5c-.5.8-.5 1.5 0 2.3M12 2.5c-.5.8-.5 1.5 0 2.3M15 2.5c-.5.8-.5 1.5 0 2.3"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"
+              />
+            </svg>
+          </a>
+        )
+      }
+
+      <ThemeToggle />
+
+      <a
+        href={url('/search/')}
+        aria-label="Search"
+        aria-current={pathname.startsWith(url('/search')) ? "page" : undefined}
+        class="text-ink-600 hover:bg-ink-50 hover:text-azure-600 dark:text-ink-300 dark:hover:bg-ink-900 dark:hover:text-azure-400 inline-flex h-10 w-10 items-center justify-center rounded-lg transition"
+      >
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m21 21-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"></path>
+        </svg>
+      </a>
+
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        class="border-ink-200 text-ink-600 hover:border-azure-400 hover:text-azure-600 dark:border-ink-700 dark:text-ink-300 dark:hover:border-azure-500 dark:hover:text-azure-400 inline-flex h-10 w-10 items-center justify-center rounded-lg border transition lg:hidden"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div
+    id="mobile-menu"
+    class="border-ink-200/70 dark:border-ink-800/70 dark:bg-ink-950/95 hidden border-t bg-white/95 lg:hidden"
+  >
+    <ul class="space-y-1 px-4 py-3 sm:px-6">
+      {
+        NAV_LINKS.map(link => (
+          <li>
+            <a
+              href={url(link.href)}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              class:list={[
+                "block rounded-lg px-3 py-2.5 text-base font-medium transition",
+                isActive(link.href)
+                  ? "bg-azure-50 text-azure-600 dark:bg-ink-800 dark:text-azure-400"
+                  : "text-ink-700 hover:bg-ink-50 dark:text-ink-200 dark:hover:bg-ink-800",
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      {
+        SOCIALS.github && (
+          <li class="border-ink-200 dark:border-ink-800 mt-2 border-t pt-2">
+            <a
+              href={SOCIALS.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-ink-700 hover:bg-ink-50 dark:text-ink-200 dark:hover:bg-ink-800 block rounded-lg px-3 py-2.5 text-base font-medium transition"
+            >
+              GitHub <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        )
+      }
+      {
+        SOCIALS.linkedin && (
+          <li>
+            <a
+              href={SOCIALS.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-ink-700 hover:bg-ink-50 dark:text-ink-200 dark:hover:bg-ink-800 block rounded-lg px-3 py-2.5 text-base font-medium transition"
+            >
+              LinkedIn <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        )
+      }
+      {
+        SOCIALS.buymeacoffee && (
+          <li>
+            <a
+              href={SOCIALS.buymeacoffee}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-ink-700 hover:bg-ink-50 dark:text-ink-200 dark:hover:bg-ink-800 block rounded-lg px-3 py-2.5 text-base font-medium transition"
+            >
+              Buy me a coffee <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        )
+      }
+    </ul>
+  </div>
+</header>
+
+<script>
+  let mobileMenuController: AbortController | undefined;
+
+  function initMobileMenu() {
+    const btn = document.getElementById("mobile-menu-btn");
+    const menu = document.getElementById("mobile-menu");
+    if (!btn || !menu || btn.dataset.bound === "true") return;
+    mobileMenuController?.abort();
+    mobileMenuController = new AbortController();
+    const { signal } = mobileMenuController;
+    btn.dataset.bound = "true";
+
+    const setOpen = (open: boolean) => {
+      menu.classList.toggle("hidden", !open);
+      btn.setAttribute("aria-expanded", String(open));
+      btn.setAttribute(
+        "aria-label",
+        open ? "Close navigation menu" : "Open navigation menu"
+      );
+    };
+
+    btn.addEventListener(
+      "click",
+      () => {
+        setOpen(btn.getAttribute("aria-expanded") !== "true");
+      },
+      { signal }
+    );
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (
+        event.key !== "Escape" ||
+        btn.getAttribute("aria-expanded") !== "true"
+      ) {
+        return;
+      }
+      setOpen(false);
+      btn.focus();
+    };
+
+    document.addEventListener("keydown", closeOnEscape, { signal });
+    document.addEventListener(
+      "pointerdown",
+      event => {
+        if (
+          btn.getAttribute("aria-expanded") !== "true" ||
+          !(event.target instanceof Node) ||
+          btn.contains(event.target) ||
+          menu.contains(event.target)
+        ) {
+          return;
+        }
+        setOpen(false);
+      },
+      { signal }
+    );
+
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+    desktopQuery.addEventListener(
+      "change",
+      event => {
+        if (event.matches) setOpen(false);
+      },
+      { signal }
+    );
+  }
+
+  initMobileMenu();
+  document.addEventListener("astro:after-swap", initMobileMenu);
+</script>

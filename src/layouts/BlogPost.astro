@@ -1,0 +1,322 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import BaseLayout from "./BaseLayout.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import TagList from "@/components/TagList.astro";
+import Comments from "@/components/Comments.astro";
+import NewsletterSignup from "@/components/NewsletterSignup.astro";
+import PostListItem from "@/components/PostListItem.astro";
+import { AUTHOR } from "@/consts";
+import { url } from "@/utils/paths";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  readingTime: string;
+  headings?: { depth: number; slug: string; text: string }[];
+  relatedPosts?: CollectionEntry<"blog">[];
+  olderPost?: CollectionEntry<"blog">;
+  newerPost?: CollectionEntry<"blog">;
+}
+
+const {
+  post,
+  readingTime,
+  headings = [],
+  relatedPosts = [],
+  olderPost,
+  newerPost,
+} = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroAlt, tags } =
+  post.data;
+const tableOfContents = headings.filter(heading => heading.depth === 2);
+
+// A trailing parenthetical (e.g. "Title (Subtitle)") renders on its own line
+// in the post heading, while `title` stays a single clean string everywhere
+// else (metadata, cards, RSS). Titles without one are unaffected.
+const titleMatch = title.match(/^(.*?)\s+(\(.*\))$/);
+const titleMain = titleMatch ? titleMatch[1] : title;
+const titleAside = titleMatch ? titleMatch[2] : null;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  type="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  image={heroImage}
+  imageAlt={heroAlt ?? title}
+  tags={tags}
+>
+  <div data-reading-progress-track class="sticky top-16 z-30 h-0.5 w-full">
+    <div data-reading-progress class="bg-azure-600 dark:bg-azure-400 h-full">
+    </div>
+  </div>
+  <div
+    data-blog-article-container
+    class="mx-auto max-w-3xl px-4 py-12 sm:px-6 xl:grid xl:max-w-6xl xl:grid-cols-[minmax(0,48rem)_16rem] xl:justify-center xl:gap-12"
+  >
+    <article data-blog-article class="min-w-0">
+      <header class="mb-8">
+        <a
+          href={url('/blog/')}
+          class="text-ink-500 hover:text-azure-600 dark:text-ink-400 dark:hover:text-azure-400 mb-6 inline-flex items-center gap-1 text-sm font-medium transition"
+        >
+          &larr; Back to blog
+        </a>
+        <h1
+          class="text-ink-900 text-3xl font-bold tracking-tight text-balance sm:text-4xl dark:text-white"
+        >
+          {titleMain}
+          {
+            titleAside && (
+              <span class="text-ink-500 dark:text-ink-400 mt-1 block text-2xl sm:text-3xl">
+                {titleAside}
+              </span>
+            )
+          }
+        </h1>
+        <div
+          class="text-ink-500 dark:text-ink-400 mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm"
+        >
+          <FormattedDate date={pubDate} />
+          <span aria-hidden="true">&middot;</span>
+          <span>{readingTime}</span>
+          <span aria-hidden="true">&middot;</span>
+          <span>
+            By <a
+              href={url('/about/')}
+              rel="author"
+              class="text-azure-600 dark:text-azure-400 font-medium hover:underline"
+              >{AUTHOR.name}</a
+            >
+          </span>
+          {
+            updatedDate && (
+              <>
+                <span aria-hidden="true">&middot;</span>
+                <span>
+                  Updated <FormattedDate date={updatedDate} />
+                </span>
+              </>
+            )
+          }
+        </div>
+        <TagList tags={tags} max={4} class="mt-4" />
+      </header>
+
+      {
+        heroImage && (
+          <Image
+            data-article-hero
+            src={heroImage}
+            alt={heroAlt ?? title}
+            widths={[480, 768, 1200]}
+            sizes="(min-width: 768px) 768px, calc(100vw - 2rem)"
+            loading="eager"
+            fetchpriority="high"
+            class="mb-10 aspect-[16/9] w-full rounded-2xl object-cover shadow-sm ring-1 ring-ink-200/50 dark:ring-ink-800/50"
+          />
+        )
+      }
+
+      {
+        tableOfContents.length >= 3 && (
+          <nav
+            aria-label="On this page"
+            data-table-of-contents
+            class="border-ink-200 bg-ink-50 dark:border-ink-800 dark:bg-ink-900 mb-10 rounded-xl border p-5 xl:hidden"
+          >
+            <p class="text-ink-900 text-sm font-semibold dark:text-white">
+              On this page
+            </p>
+            <ol class="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+              {tableOfContents.map(heading => (
+                <li>
+                  <a
+                    href={`#${heading.slug}`}
+                    class="text-ink-600 hover:text-azure-600 dark:text-ink-300 dark:hover:text-azure-400 inline-flex py-0.5 transition"
+                  >
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
+
+      <div
+        class="prose prose-lg dark:prose-invert prose-headings:font-semibold prose-pre:rounded-xl prose-pre:border prose-pre:border-ink-200 dark:prose-pre:border-ink-800 prose-p:text-ink-800 dark:prose-p:text-ink-100 prose-li:text-ink-800 dark:prose-li:text-ink-100 prose-strong:text-ink-900 dark:prose-strong:text-white max-w-none"
+      >
+        <slot />
+      </div>
+
+      <div class="mt-16">
+        <NewsletterSignup />
+      </div>
+
+      {
+        relatedPosts.length > 0 && (
+          <section
+            class="border-ink-200/70 dark:border-ink-800/70 mt-16 border-t pt-10"
+            aria-labelledby="related-posts-heading"
+          >
+            <h2
+              id="related-posts-heading"
+              class="text-ink-900 text-xl font-semibold dark:text-white"
+            >
+              Related articles
+            </h2>
+            <div class="divide-ink-200/70 dark:divide-ink-800/70 mt-4 divide-y">
+              {relatedPosts.map(relatedPost => (
+                <PostListItem post={relatedPost} />
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {
+        (olderPost || newerPost) && (
+          <nav
+            aria-label="More articles"
+            class="border-ink-200/70 dark:border-ink-800/70 mt-12 grid gap-4 border-t pt-8 sm:grid-cols-2"
+          >
+            {olderPost ? (
+              <a
+                href={url(`/blog/${olderPost.id}/`)}
+                class="border-ink-200 hover:border-azure-400 dark:border-ink-800 dark:hover:border-azure-600 rounded-xl border p-4 transition"
+              >
+                <span class="text-ink-500 dark:text-ink-400 block text-xs font-semibold tracking-wide uppercase">
+                  Older article
+                </span>
+                <span class="text-ink-900 dark:text-ink-100 mt-1 block font-semibold">
+                  {olderPost.data.title}
+                </span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {newerPost ? (
+              <a
+                href={url(`/blog/${newerPost.id}/`)}
+                class="border-ink-200 hover:border-azure-400 dark:border-ink-800 dark:hover:border-azure-600 rounded-xl border p-4 text-right transition"
+              >
+                <span class="text-ink-500 dark:text-ink-400 block text-xs font-semibold tracking-wide uppercase">
+                  Newer article
+                </span>
+                <span class="text-ink-900 dark:text-ink-100 mt-1 block font-semibold">
+                  {newerPost.data.title}
+                </span>
+              </a>
+            ) : (
+              <span />
+            )}
+          </nav>
+        )
+      }
+
+      <Comments />
+    </article>
+
+    {
+      tableOfContents.length >= 3 && (
+        <aside class="hidden xl:block" aria-label="Article outline">
+          <nav
+            data-toc-rail
+            class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto"
+          >
+            <p class="text-ink-500 dark:text-ink-400 text-xs font-semibold tracking-wide uppercase">
+              On this page
+            </p>
+            <ul class="border-ink-200 dark:border-ink-800 mt-3 space-y-1 border-l">
+              {tableOfContents.map(heading => (
+                <li>
+                  <a
+                    href={`#${heading.slug}`}
+                    data-toc-link={heading.slug}
+                    class="text-ink-500 hover:text-azure-600 dark:text-ink-400 dark:hover:text-azure-400 -ml-px block border-l border-transparent py-1 pl-4 text-sm transition"
+                  >
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<script>
+  // Highlights the outline entry for the section currently in view.
+  let controller: AbortController | undefined;
+
+  function initArticleChrome() {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    const article = document.querySelector<HTMLElement>("[data-blog-article]");
+    const links = [
+      ...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"),
+    ];
+    if (!article || links.length === 0) return;
+
+    const activeClasses = [
+      "text-azure-600",
+      "dark:text-azure-400",
+      "border-azure-600",
+      "dark:border-azure-400",
+      "font-medium",
+    ];
+
+    const setActive = (slug: string | null) => {
+      for (const link of links) {
+        const on = link.dataset.tocLink === slug;
+        link.classList.toggle("border-transparent", !on);
+        for (const cls of activeClasses) link.classList.toggle(cls, on);
+        if (on) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      }
+    };
+
+    const headings = links
+      .map(link =>
+        document.getElementById(decodeURIComponent(link.dataset.tocLink ?? ""))
+      )
+      .filter((el): el is HTMLElement => el !== null);
+
+    const update = () => {
+      if (headings.length === 0) return;
+      const offset = 120;
+      let current = headings[0];
+      for (const heading of headings) {
+        if (heading.getBoundingClientRect().top <= offset) current = heading;
+      }
+      const atBottom =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 4;
+      setActive(atBottom ? headings[headings.length - 1].id : current.id);
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        update();
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true, signal });
+    window.addEventListener("resize", onScroll, { passive: true, signal });
+    update();
+  }
+
+  initArticleChrome();
+  document.addEventListener("astro:after-swap", initArticleChrome);
+</script>

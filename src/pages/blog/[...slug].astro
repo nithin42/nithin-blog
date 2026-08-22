@@ -1,0 +1,58 @@
+---
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import readingTimeFn from "reading-time";
+import BlogPost from "@/layouts/BlogPost.astro";
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map(post => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const readingTime = readingTimeFn(post.body ?? "").text;
+const postTags = new Set(post.data.tags.map(tag => tag.toLowerCase()));
+const publishedPosts = (
+  await getCollection("blog", ({ data }) => !data.draft)
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const currentIndex = publishedPosts.findIndex(
+  candidate => candidate.id === post.id
+);
+const newerPost =
+  currentIndex > 0 ? publishedPosts[currentIndex - 1] : undefined;
+const olderPost =
+  currentIndex >= 0 && currentIndex < publishedPosts.length - 1
+    ? publishedPosts[currentIndex + 1]
+    : undefined;
+const relatedPosts = publishedPosts
+  .filter(candidate => candidate.id !== post.id)
+  .map(candidate => ({
+    post: candidate,
+    sharedTags: candidate.data.tags.filter(tag =>
+      postTags.has(tag.toLowerCase())
+    ).length,
+  }))
+  .filter(candidate => candidate.sharedTags > 0)
+  .sort(
+    (a, b) =>
+      b.sharedTags - a.sharedTags ||
+      b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf()
+  )
+  .slice(0, 3)
+  .map(candidate => candidate.post);
+---
+
+<BlogPost
+  post={post}
+  readingTime={readingTime}
+  headings={headings}
+  relatedPosts={relatedPosts}
+  olderPost={olderPost}
+  newerPost={newerPost}
+>
+  <Content />
+</BlogPost>

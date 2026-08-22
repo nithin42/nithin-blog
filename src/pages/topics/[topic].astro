@@ -1,0 +1,226 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import { ICON_PATHS } from "@/utils/icons";
+import { slugify } from "@/utils/tags";
+import { readingTimeLabel } from "@/utils/readingTime";
+import { TOPICS, getTopicPosts } from "@/utils/topics";
+import { url } from "@/utils/paths";
+
+export const getStaticPaths = (async () => {
+  const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
+
+  return TOPICS.map(topic => ({
+    params: { topic: topic.slug },
+    props: {
+      topic,
+      posts: getTopicPosts(topic, posts),
+      allPosts: posts,
+    },
+  })).filter(t => t.props.posts.length > 0);
+}) satisfies GetStaticPaths;
+
+const { topic, posts, allPosts } = Astro.props;
+
+const availableTagSlugs = new Set(
+  allPosts.flatMap(post => post.data.tags.map(slugify))
+);
+const visibleTopicTags = topic.tags.filter(tag =>
+  availableTagSlugs.has(slugify(tag))
+);
+const relatedTopics = TOPICS.filter(
+  t => t.slug !== topic.slug && getTopicPosts(t, allPosts).length > 0
+).slice(0, 3);
+---
+
+<BaseLayout title={topic.title} description={topic.description}>
+  <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <a
+      href={url('/topics/')}
+      class="text-ink-500 hover:text-azure-600 dark:text-ink-400 dark:hover:text-azure-400 mb-6 inline-flex items-center gap-1 text-sm font-medium transition"
+    >
+      &larr; All topics
+    </a>
+
+    <header
+      class="border-ink-200 dark:border-ink-800 dark:bg-ink-900 relative overflow-hidden rounded-3xl border bg-white p-7 sm:p-9"
+    >
+      <div
+        class="bg-azure-500/10 absolute -top-20 -right-16 -z-0 h-56 w-56 rounded-full blur-3xl"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="relative flex flex-col gap-5">
+        <div class="flex items-center gap-4">
+          <span
+            class="from-azure-600 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br to-teal-500 text-white"
+            aria-hidden="true"
+          >
+            <svg
+              class="h-7 w-7"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d={ICON_PATHS[topic.icon]}></path>
+            </svg>
+          </span>
+          <div>
+            <h1
+              class="text-ink-900 text-3xl font-bold tracking-tight sm:text-4xl dark:text-white"
+            >
+              {topic.title}
+            </h1>
+            <p class="text-ink-500 dark:text-ink-400 text-sm font-medium">
+              {posts.length}
+              {posts.length === 1 ? "article" : "articles"}
+            </p>
+          </div>
+        </div>
+
+        <p class="text-ink-600 dark:text-ink-300 max-w-2xl text-lg">
+          {topic.intro}
+        </p>
+
+        <ul class="grid gap-2 sm:grid-cols-2">
+          {
+            topic.focus.map(item => (
+              <li class="text-ink-700 dark:text-ink-300 flex items-start gap-2 text-sm">
+                <svg
+                  class="mt-0.5 h-4 w-4 shrink-0 text-teal-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m5 13 4 4L19 7"
+                  />
+                </svg>
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+
+        <ul class="flex flex-wrap gap-2">
+          {
+            visibleTopicTags.map(tag => (
+              <li>
+                <a
+                  href={url(`/tags/${slugify(tag)}/`)}
+                  class="border-azure-200 bg-azure-50 text-azure-700 hover:border-azure-400 hover:bg-azure-100 dark:border-ink-700 dark:bg-ink-800 dark:text-azure-300 dark:hover:border-azure-500 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition"
+                >
+                  #{tag}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </header>
+
+    <section class="mt-10">
+      <div class="mb-6 flex items-baseline justify-between gap-4">
+        <h2 class="text-ink-900 text-lg font-semibold dark:text-white">
+          Articles about {topic.title}
+        </h2>
+        <p
+          class="text-ink-500 dark:text-ink-400 flex items-center gap-1.5 text-xs font-medium"
+        >
+          <svg
+            class="h-3.5 w-3.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 5h13M3 12h9m-9 7h13M17 8l4 4-4 4"></path>
+          </svg>
+          Newest first
+        </p>
+      </div>
+
+      <ol
+        class="border-ink-200 dark:border-ink-800 relative ms-2 border-s sm:ms-3"
+      >
+        {
+          posts.map(post => {
+            const postUrl = url(`/blog/${post.id}/`);
+            const readTime = readingTimeLabel(post.body);
+            const primaryTag = post.data.tags[0];
+            return (
+              <li class="group relative ms-6 pb-9 last:pb-0 sm:ms-8">
+                <span
+                  class="bg-azure-500 ring-ink-200 group-hover:bg-azure-600 dark:border-ink-950 dark:ring-ink-800 absolute -start-[calc(1.5rem+0.5rem)] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-white ring-1 transition group-hover:scale-125 sm:-start-[calc(2rem+0.5rem)]"
+                  aria-hidden="true"
+                />
+                <div class="group-hover:border-ink-200 dark:group-hover:border-ink-800 dark:group-hover:bg-ink-900 relative rounded-2xl border border-transparent px-4 py-3 transition group-hover:bg-white group-hover:shadow-sm">
+                  <div class="text-ink-500 dark:text-ink-400 flex flex-wrap items-center gap-2 text-xs font-medium">
+                    <span class="text-azure-600 dark:text-azure-400 font-semibold">
+                      <FormattedDate date={post.data.pubDate} />
+                    </span>
+                    {readTime && <span aria-hidden="true">·</span>}
+                    {readTime && <span>{readTime}</span>}
+                    {primaryTag && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span>{primaryTag}</span>
+                      </>
+                    )}
+                  </div>
+                  <h3 class="text-ink-900 group-hover:text-azure-600 dark:group-hover:text-azure-400 mt-1.5 text-lg font-semibold transition dark:text-white">
+                    <a href={postUrl} class="after:absolute after:inset-0">
+                      {post.data.title}
+                    </a>
+                  </h3>
+                  <p class="text-ink-600 dark:text-ink-300 mt-1 line-clamp-2 max-w-2xl text-sm">
+                    {post.data.description}
+                  </p>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </section>
+
+    {
+      relatedTopics.length > 0 && (
+        <section class="border-ink-200/70 dark:border-ink-800/70 mt-14 border-t pt-10">
+          <h2 class="text-ink-900 text-lg font-semibold dark:text-white">
+            Explore related topics
+          </h2>
+          <ul class="mt-4 flex flex-wrap gap-3">
+            {relatedTopics.map(t => (
+              <li>
+                <a
+                  href={url(`/topics/${t.slug}/`)}
+                  class="border-ink-200 text-ink-700 hover:border-azure-400 hover:text-azure-600 dark:border-ink-800 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-azure-500 dark:hover:text-azure-400 inline-flex items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-medium transition"
+                >
+                  {t.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

@@ -1,0 +1,36 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { url } from "@/utils/paths";
+---
+
+<BaseLayout
+  title="Page not found"
+  description="The page you're looking for doesn't exist."
+  noindex
+>
+  <div
+    class="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6"
+  >
+    <p class="text-azure-600 dark:text-azure-400 text-7xl font-bold">404</p>
+    <h1 class="text-ink-900 mt-4 text-2xl font-bold dark:text-white">
+      This page took a different route.
+    </h1>
+    <p class="text-ink-600 dark:text-ink-300 mt-3">
+      The page you're looking for doesn't exist or has moved.
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a
+        href={url('/')}
+        class="bg-azure-600 hover:bg-azure-700 rounded-lg px-5 py-3 text-sm font-semibold text-white transition"
+      >
+        Back home
+      </a>
+      <a
+        href={url('/blog/')}
+        class="border-ink-300 text-ink-700 hover:border-azure-400 hover:text-azure-600 dark:border-ink-700 dark:text-ink-200 dark:hover:border-azure-500 dark:hover:text-azure-400 rounded-lg border px-5 py-3 text-sm font-semibold transition"
+      >
+        Read the blog
+      </a>
+    </div>
+  </div>
+</BaseLayout>

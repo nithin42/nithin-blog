@@ -1,0 +1,170 @@
+---
+import { GISCUS } from "@/consts";
+
+const configured =
+  GISCUS.repoId !== "REPLACE_WITH_REPO_ID" &&
+  GISCUS.categoryId !== "REPLACE_WITH_CATEGORY_ID";
+---
+
+<section
+  class="mt-16"
+  aria-labelledby="comments-heading"
+  data-comments
+  data-configured={configured ? "true" : undefined}
+  data-repo={configured ? GISCUS.repo : undefined}
+  data-repo-id={configured ? GISCUS.repoId : undefined}
+  data-category={configured ? GISCUS.category : undefined}
+  data-category-id={configured ? GISCUS.categoryId : undefined}
+  data-mapping={configured ? GISCUS.mapping : undefined}
+  data-reactions-enabled={configured ? GISCUS.reactionsEnabled : undefined}
+  data-emit-metadata={configured ? GISCUS.emitMetadata : undefined}
+  data-input-position={configured ? GISCUS.inputPosition : undefined}
+  data-lang={configured ? GISCUS.lang : undefined}
+>
+  <h2
+    id="comments-heading"
+    class="text-ink-900 mb-3 text-xl font-semibold dark:text-white"
+  >
+    Comments
+  </h2>
+
+  {
+    configured ? (
+      <>
+        <p class="text-ink-600 dark:text-ink-300 mb-4 text-sm">
+          Comments are hosted by GitHub Discussions. Loading them connects your
+          browser to giscus.app and GitHub.
+        </p>
+        <button
+          type="button"
+          data-load-comments
+          class="border-ink-300 text-ink-700 hover:border-azure-400 hover:text-azure-600 dark:border-ink-700 dark:text-ink-200 dark:hover:border-azure-500 dark:hover:text-azure-400 rounded-lg border px-4 py-2 text-sm font-semibold transition disabled:cursor-wait disabled:opacity-60"
+        >
+          Load comments
+        </button>
+        <p
+          class="text-ink-500 dark:text-ink-400 mt-3 text-sm"
+          data-comments-status
+          role="status"
+          aria-live="polite"
+        />
+        <div class="giscus mt-6" data-giscus-container />
+      </>
+    ) : (
+      <div class="border-ink-300 bg-ink-50 text-ink-600 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-300 rounded-xl border border-dashed p-6 text-sm">
+        <p class="text-ink-800 dark:text-ink-100 font-medium">
+          Comments aren't configured yet.
+        </p>
+        <p class="mt-1">
+          To enable Giscus: enable GitHub Discussions on a public repo, install
+          the{" "}
+          <a
+            href="https://github.com/apps/giscus"
+            class="text-azure-600 dark:text-azure-400 hover:underline"
+          >
+            Giscus app
+          </a>
+          , then fill in the values from{" "}
+          <a
+            href="https://giscus.app"
+            class="text-azure-600 dark:text-azure-400 hover:underline"
+          >
+            giscus.app
+          </a>{" "}
+          in <code class="font-mono">src/consts.ts</code>.
+        </p>
+      </div>
+    )
+  }
+</section>
+
+<script>
+  function currentGiscusTheme() {
+    return document.documentElement.classList.contains("dark")
+      ? "dark_dimmed"
+      : "light";
+  }
+
+  function initComments() {
+    const section = document.querySelector<HTMLElement>(
+      '[data-comments][data-configured="true"]'
+    );
+    if (!section || section.dataset.bound === "true") return;
+
+    const container = section.querySelector<HTMLElement>(
+      "[data-giscus-container]"
+    );
+    const button = section.querySelector<HTMLButtonElement>(
+      "[data-load-comments]"
+    );
+    const status = section.querySelector<HTMLElement>("[data-comments-status]");
+    if (!container || !button || !status) return;
+    section.dataset.bound = "true";
+
+    const setStatus = (message: string) => {
+      status.textContent = message;
+    };
+
+    const loadGiscus = () => {
+      if (container.dataset.loaded === "true") return;
+      container.dataset.loaded = "true";
+      button.disabled = true;
+      button.textContent = "Loading…";
+      setStatus("Loading comments…");
+
+      const script = document.createElement("script");
+      script.src = "https://giscus.app/client.js";
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      script.setAttribute("data-repo", section.dataset.repo ?? "");
+      script.setAttribute("data-repo-id", section.dataset.repoId ?? "");
+      script.setAttribute("data-category", section.dataset.category ?? "");
+      script.setAttribute("data-category-id", section.dataset.categoryId ?? "");
+      script.setAttribute(
+        "data-mapping",
+        section.dataset.mapping ?? "pathname"
+      );
+      script.setAttribute(
+        "data-reactions-enabled",
+        section.dataset.reactionsEnabled ?? "1"
+      );
+      script.setAttribute(
+        "data-emit-metadata",
+        section.dataset.emitMetadata ?? "0"
+      );
+      script.setAttribute(
+        "data-input-position",
+        section.dataset.inputPosition ?? "top"
+      );
+      script.setAttribute("data-theme", currentGiscusTheme());
+      script.setAttribute("data-lang", section.dataset.lang ?? "en");
+      script.addEventListener("load", () => {
+        button.hidden = true;
+        setStatus("Comments loaded.");
+      });
+      script.addEventListener("error", () => {
+        container.dataset.loaded = "false";
+        button.disabled = false;
+        button.textContent = "Try loading comments again";
+        setStatus("Comments couldn't load. Please try again.");
+      });
+      container.appendChild(script);
+    };
+
+    button.addEventListener("click", loadGiscus);
+  }
+
+  function syncGiscusTheme() {
+    const frame = document.querySelector<HTMLIFrameElement>(
+      "[data-comments] iframe.giscus-frame"
+    );
+    frame?.contentWindow?.postMessage(
+      { giscus: { setConfig: { theme: currentGiscusTheme() } } },
+      "https://giscus.app"
+    );
+  }
+
+  initComments();
+  document.addEventListener("astro:page-load", initComments);
+  window.addEventListener("theme-change", syncGiscusTheme);
+</script>

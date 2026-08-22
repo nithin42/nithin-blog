@@ -1,0 +1,64 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import TopicCard from "@/components/TopicCard.astro";
+import { TOPICS, getTopicPosts } from "@/utils/topics";
+import { AUTHOR } from "@/consts";
+import { url } from "@/utils/paths";
+
+const posts = await getCollection("blog", ({ data }) => !data.draft);
+
+const topics = TOPICS.map(topic => ({
+  ...topic,
+  count: getTopicPosts(topic, posts).length,
+})).filter(topic => topic.count > 0);
+---
+
+<BaseLayout
+  title="Topics"
+  description={`Explore all articles by topic by ${AUTHOR.name}.`}
+>
+  <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <header class="mb-10">
+      <h1
+        class="text-ink-900 text-3xl font-bold tracking-tight text-balance sm:text-4xl dark:text-white"
+      >
+        Topics
+      </h1>
+      <p class="text-ink-600 dark:text-ink-300 mt-3 text-lg">
+        Major categories covering cloud architecture, modern platforms, and
+        software development.
+      </p>
+    </header>
+
+    {
+      topics.length === 0 ? (
+        <p class="text-ink-500 dark:text-ink-400">
+          No topics have published articles yet. Check back soon!
+        </p>
+      ) : (
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {topics.map(topic => (
+            <TopicCard
+              title={topic.title}
+              description={topic.description}
+              href={`/topics/${topic.slug}/`}
+              count={topic.count}
+              icon={topic.icon}
+              headingLevel={2}
+            />
+          ))}
+        </div>
+      )
+    }
+
+    <p class="text-ink-500 dark:text-ink-400 mt-10 text-sm">
+      Looking for something more specific? Browse every
+      <a
+        href={url('/tags/')}
+        class="text-azure-600 dark:text-azure-400 font-medium hover:underline"
+        >tag</a
+      >.
+    </p>
+  </div>
+</BaseLayout>

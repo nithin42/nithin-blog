@@ -1,0 +1,124 @@
+---
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { url } from "@/utils/paths";
+
+export const getStaticPaths = (async () => {
+  const projects = await getCollection("projects");
+  return projects.map(project => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props;
+const { title, summary, tech, repoUrl, liveUrl, image, imageAlt } =
+  project.data;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={title} description={summary}>
+  <article class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <header class="mb-8">
+      <a
+        href={url('/projects/')}
+        class="text-ink-500 hover:text-azure-600 dark:text-ink-400 dark:hover:text-azure-400 mb-6 inline-flex items-center gap-1 text-sm font-medium transition"
+      >
+        &larr; Back to projects
+      </a>
+      <h1
+        class="text-ink-900 text-3xl font-bold tracking-tight sm:text-4xl dark:text-white"
+      >
+        {title}
+      </h1>
+      <p class="text-ink-600 dark:text-ink-300 mt-3 text-lg">{summary}</p>
+
+      {
+        tech.length > 0 && (
+          <ul class="mt-4 flex flex-wrap gap-2">
+            {tech.map(t => (
+              <li class="bg-ink-100 text-ink-600 dark:bg-ink-800 dark:text-ink-300 rounded-md px-2 py-0.5 font-mono text-xs">
+                {t}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      {
+        (liveUrl || repoUrl) && (
+          <div class="mt-6 flex flex-wrap items-center gap-4 text-sm font-medium">
+            {liveUrl && (
+              <a
+                href={liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="bg-azure-600 hover:bg-azure-700 inline-flex items-center gap-1 rounded-lg px-4 py-2 text-white transition"
+              >
+                View live
+                <svg
+                  class="h-3.5 w-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14 5h5v5m0-5L10 14M5 5v14h14"
+                  />
+                </svg>
+              </a>
+            )}
+            {repoUrl && (
+              <a
+                href={repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="border-ink-200 text-ink-700 hover:border-azure-300 hover:text-azure-600 dark:border-ink-700 dark:text-ink-200 dark:hover:border-azure-700 dark:hover:text-azure-400 inline-flex items-center gap-1 rounded-lg border px-4 py-2 transition"
+              >
+                <svg
+                  class="h-4 w-4"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.48l-.01-1.7c-2.78.62-3.37-1.37-3.37-1.37-.46-1.18-1.11-1.5-1.11-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.35 9.35 0 015 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.79-4.57 5.04.36.32.68.94.68 1.9l-.01 2.82c0 .27.18.59.69.48A10.02 10.02 0 0022 12.25C22 6.58 17.52 2 12 2z"
+                  />
+                </svg>
+                View code
+              </a>
+            )}
+          </div>
+        )
+      }
+    </header>
+
+    {
+      image && (
+        <Image
+          src={image}
+          alt={imageAlt ?? title}
+          widths={[480, 768, 1200]}
+          sizes="(min-width: 768px) 768px, calc(100vw - 2rem)"
+          loading="eager"
+          fetchpriority="high"
+          class="mb-10 aspect-[16/9] w-full rounded-2xl object-cover"
+        />
+      )
+    }
+
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-semibold prose-pre:rounded-xl prose-pre:border prose-pre:border-ink-200 dark:prose-pre:border-ink-800 max-w-none"
+    >
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

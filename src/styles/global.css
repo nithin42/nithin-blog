@@ -1,0 +1,258 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Enable class-based dark mode (toggled on <html class="dark">) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ *
+ * Azure-inspired design tokens
+ * ------------------------------------------------------------------ */
+@theme {
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono:
+    "JetBrains Mono", ui-monospace, "SFMono-Regular", "Cascadia Code",
+    "Roboto Mono", monospace;
+
+  /* Brand palette */
+  --color-azure-50: #eff8ff;
+  --color-azure-100: #dbeefe;
+  --color-azure-200: #bfe1ff;
+  --color-azure-300: #93cdff;
+  --color-azure-400: #60affc;
+  --color-azure-500: #3b8ef8;
+  --color-azure-600: #0078d4; /* Microsoft Azure blue */
+  --color-azure-700: #005ba1;
+  --color-azure-800: #084d83;
+  --color-azure-900: #0d426d;
+  --color-azure-950: #082a49;
+
+  --color-teal-400: #2dd4bf;
+  --color-teal-500: #14b8a6;
+
+  /* Neutral / surface (deep navy charcoal) */
+  --color-ink-50: #f5f7fa;
+  --color-ink-100: #e6ebf1;
+  --color-ink-200: #cad3df;
+  --color-ink-300: #9fb0c3;
+  --color-ink-400: #6c8299;
+  --color-ink-500: #4a5f76;
+  --color-ink-600: #35485c;
+  --color-ink-700: #26374a;
+  --color-ink-800: #172231;
+  --color-ink-900: #0d1622;
+  --color-ink-950: #070d16;
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+  scroll-padding-top: 5rem;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  @apply text-ink-800 bg-white antialiased;
+  @apply dark:bg-ink-950 dark:text-ink-100;
+  font-family: var(--font-sans);
+}
+
+:where(a, button) {
+  touch-action: manipulation;
+}
+
+/* Gradient text helper — reserved for the brand monogram only (see DESIGN.md) */
+.text-gradient {
+  @apply from-azure-600 bg-gradient-to-r to-teal-400 bg-clip-text text-transparent;
+}
+
+/* Subtle grid/glow backdrop used on hero sections */
+.bg-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-ink-300) 12%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-ink-300) 12%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px;
+}
+
+:where(.dark) .bg-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-ink-600) 15%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-ink-600) 15%, transparent) 1px,
+      transparent 1px
+    );
+}
+
+/* Focus visibility */
+:focus-visible {
+  @apply outline-azure-500 outline-2 outline-offset-2;
+}
+
+/* Prose (article) tweaks so it reads well in both themes */
+.prose {
+  text-wrap: pretty;
+}
+.prose :where(a):not(:where(.not-prose *)) {
+  @apply text-azure-600 dark:text-azure-400 no-underline hover:underline;
+}
+.prose :where(h1, h2, h3, h4):not(:where(.not-prose *)) {
+  @apply scroll-mt-24;
+  text-wrap: balance;
+}
+/* Long inline code (resource IDs, cmdlets, URLs) must not force the page to
+ * scroll sideways on narrow screens. Block code inside <pre> still scrolls. */
+.prose :where(code):not(:where(.not-prose *, pre *)) {
+  overflow-wrap: anywhere;
+}
+
+/* Syntax highlighting.
+ * Shiki's palette lives in classes rather than style attributes so the CSP can
+ * keep style-src-attr 'none'. Each rule carries the light colour plus the dark
+ * one as a custom property; these swap to the dark set on <html class="dark">. */
+html.dark .astro-code {
+  background-color: var(--shiki-dark-bg);
+}
+
+html.dark .astro-code,
+html.dark .astro-code span {
+  color: var(--shiki-dark);
+}
+
+/* Reading progress bar.
+ * Driven entirely by a CSS scroll timeline: the CSP sets style-src-attr 'none',
+ * so JS cannot write inline styles to animate it. Browsers without scroll-driven
+ * animation support simply never show the bar. */
+[data-reading-progress-track] {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  [data-reading-progress-track] {
+    display: block;
+    background-color: color-mix(in srgb, var(--color-ink-200) 60%, transparent);
+  }
+
+  :where(.dark) [data-reading-progress-track] {
+    background-color: color-mix(in srgb, var(--color-ink-800) 60%, transparent);
+  }
+
+  /* The timeline is deliberately declared in its own rule. Lightning CSS still
+   * models `animation-timeline` as part of the `animation` shorthand (an old
+   * draft), so when both sit in one rule it folds them into
+   * `animation: linear forwards reading-progress scroll(root)`, which browsers
+   * reject outright and the bar silently stops working in the minified build. */
+  [data-reading-progress] {
+    transform-origin: left;
+    animation: reading-progress linear forwards;
+  }
+
+  [data-reading-progress]:not(:root) {
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes reading-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Reduced motion: suppress transforms and scale animations */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #172231 !important;
+  }
+
+  body > header,
+  body > footer,
+  [data-article-hero],
+  [data-comments],
+  [data-newsletter-container],
+  [data-table-of-contents],
+  [data-toc-rail],
+  [data-reading-progress-track],
+  nav[aria-label="More articles"] {
+    display: none !important;
+  }
+
+  [data-blog-article] {
+    max-width: none;
+    padding: 0;
+  }
+
+  [data-blog-article-container] {
+    display: block !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  [data-blog-article] .prose {
+    color: #172231 !important;
+    font-size: 10.5pt;
+  }
+
+  [data-blog-article] :where(h1, h2, h3, h4, pre, figure, blockquote, table) {
+    break-inside: avoid;
+  }
+
+  [data-blog-article] :where(h1, h2, h3, h4) {
+    break-after: avoid;
+    color: #0d1622 !important;
+  }
+
+  [data-blog-article] pre {
+    overflow: visible;
+    border: 1px solid #9fb0c3 !important;
+    white-space: pre-wrap;
+  }
+
+  [data-blog-article] .prose a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    overflow-wrap: anywhere;
+    color: #4a5f76;
+    font-size: 0.85em;
+  }
+}

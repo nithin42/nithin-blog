@@ -1,0 +1,52 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { slugify } from "@/utils/tags";
+
+const posts = await getCollection("blog", ({ data }) => !data.draft);
+
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+---
+
+<BaseLayout title="Tags" description="Browse blog posts by topic.">
+  <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <header class="mb-10">
+      <h1
+        class="text-ink-900 text-3xl font-bold tracking-tight sm:text-4xl dark:text-white"
+      >
+        Tags
+      </h1>
+      <p class="text-ink-600 dark:text-ink-300 mt-3 text-lg">
+        Browse every label used across the blog.
+      </p>
+    </header>
+
+    {
+      tags.length === 0 ? (
+        <p class="text-ink-500 dark:text-ink-400">No tags yet.</p>
+      ) : (
+        <ul class="flex flex-wrap gap-3">
+          {tags.map(([tag, count]) => (
+            <li>
+              <a
+                href={`/tags/${slugify(tag)}/`}
+                class="border-ink-200 text-ink-700 hover:border-azure-400 hover:text-azure-600 dark:border-ink-800 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-azure-500 dark:hover:text-azure-400 inline-flex items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-medium transition"
+              >
+                {tag}
+                <span class="bg-ink-100 text-ink-500 dark:bg-ink-800 dark:text-ink-400 rounded-full px-2 py-0.5 text-xs">
+                  {count}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</BaseLayout>

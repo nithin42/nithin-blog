@@ -1,0 +1,68 @@
+---
+import { ICON_PATHS, type IconName } from "@/utils/icons";
+import { url } from "@/utils/paths";
+
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  count: number;
+  icon: IconName;
+  headingLevel?: 2 | 3;
+}
+
+const { title, description, href, count, icon, headingLevel = 3 } = Astro.props;
+const Heading = headingLevel === 2 ? "h2" : "h3";
+---
+
+<a
+  href={url(href)}
+  class="group border-ink-200 hover:border-azure-300 hover:shadow-azure-500/5 dark:border-ink-800 dark:bg-ink-900 dark:hover:border-azure-700 relative flex flex-col gap-3 rounded-2xl border bg-white p-6 transition hover:-translate-y-1 hover:shadow-lg"
+>
+  <div class="flex items-center justify-between">
+    <span
+      class="bg-azure-50 text-azure-600 group-hover:bg-azure-600 dark:bg-ink-800 dark:text-azure-400 inline-flex h-11 w-11 items-center justify-center rounded-xl transition group-hover:text-white"
+    >
+      <svg
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="1.8"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d={ICON_PATHS[icon]}></path>
+      </svg>
+    </span>
+    <span class="text-ink-400 dark:text-ink-500 text-xs font-medium"
+      >{count} {count === 1 ? "article" : "articles"}</span
+    >
+  </div>
+
+  <Heading class="text-ink-900 text-base font-semibold dark:text-white">
+    {title}
+  </Heading>
+  <p class="text-ink-600 dark:text-ink-300 text-sm">{description}</p>
+
+  <span
+    class="text-azure-600 dark:text-azure-400 mt-auto inline-flex items-center gap-1 pt-1 text-sm font-semibold"
+  >
+    Explore
+    <svg
+      class="h-4 w-4 transition group-hover:translate-x-0.5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M5 12h14m-6-6 6 6-6 6"></path>
+    </svg>
+  </span>
+</a>

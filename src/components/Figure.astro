@@ -1,0 +1,46 @@
+---
+// Explanatory in-article figure: a generated concept diagram or illustration
+// that clarifies the surrounding section. Unlike `Screenshot.astro` (which
+// frames real product UI) this renders the artwork edge-to-edge, because the
+// image is the explanation rather than a captured window.
+//
+// Usage in MDX:
+//   import Figure from "@/components/Figure.astro";
+//   import tokenFlow from "@/assets/blog/my-post/figure-token-flow.webp";
+//   <Figure
+//     src={tokenFlow}
+//     alt="Three-step token exchange from the client to the API."
+//     caption="How the delegated token is exchanged at each hop."
+//   />
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+}
+
+const { src, alt, caption } = Astro.props;
+const widths = [480, 768, 1024, 1440, src.width].filter(
+  (w, i, arr) => w <= src.width && arr.indexOf(w) === i
+);
+---
+
+<figure class="not-prose my-8">
+  <Image
+    src={src}
+    alt={alt}
+    widths={widths}
+    sizes="(min-width: 1024px) 768px, 100vw"
+    loading="lazy"
+    class="border-ink-200 dark:border-ink-800 h-auto w-full rounded-xl border"
+  />
+  {
+    caption && (
+      <figcaption class="text-ink-500 dark:text-ink-400 mt-3 text-center text-sm leading-relaxed">
+        {caption}
+      </figcaption>
+    )
+  }
+</figure>
