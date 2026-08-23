@@ -89,6 +89,10 @@ const {
         });
       }
       initGlobalViewsCounters();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initGlobalViewsCounters);
+      }
+      window.addEventListener('load', initGlobalViewsCounters);
       document.addEventListener('astro:page-load', initGlobalViewsCounters);
       document.addEventListener('astro:after-swap', initGlobalViewsCounters);
     </script>
