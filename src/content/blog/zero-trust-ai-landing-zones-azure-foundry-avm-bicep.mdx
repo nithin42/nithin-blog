@@ -9,6 +9,8 @@ tags: ["azure", "security-identity", "microsoft-foundry", "ai-agents"]
 
 import { Image } from "astro:assets";
 import topologyDiagram from "@/assets/blog/zero-trust-network-topology-diagram-v1.jpg";
+import entraIdRbacFlow from "@/assets/blog/entra-id-managed-identity-rbac-flow-v3.jpg";
+import splitBrainDnsFlow from "@/assets/blog/split-brain-dns-resolution-flow-v3.jpg";
 
 Deploying autonomous agentic workloads and enterprise Generative AI systems inside regulated environments introduces strict architectural constraints. When orchestrating agent swarms across ERP systems, document vaults, and fine-tuned LLM models, traditional public cloud endpoints present unacceptable data exfiltration vectors.
 
@@ -186,6 +188,12 @@ With network boundaries enforced, authentication must be completely decoupled fr
 | **Agent ACA Runtime** | `Search Index Data Reader` | Azure AI Search | Querying vector & hybrid document indexes |
 | **Agent ACA Runtime** | `Key Vault Secrets User` | Azure Key Vault | Reading downstream OAuth secrets on-demand |
 
+<Image
+  src={entraIdRbacFlow}
+  alt="Microsoft Entra ID Managed Identity Passwordless RBAC Architecture Diagram"
+  class="my-8 w-full rounded-2xl shadow-md ring-1 ring-ink-200/50 dark:ring-ink-800/50"
+/>
+
 ### Production Python Client Initialization
 
 ```python
@@ -234,6 +242,12 @@ class ZeroTrustAgentContext:
 
 ### Lesson 1: The Split-Brain DNS Trap
 When configuring Private Endpoints in Azure, clients inside the VNet must resolve the canonical name `cog-foundry-hub-prod.openai.azure.com` to its private IP (`10.240.2.4`), while external queries resolve to a public CNAME. 
+
+<Image
+  src={splitBrainDnsFlow}
+  alt="Split-Brain DNS Resolution Flow for Azure AI Foundry"
+  class="my-8 w-full rounded-2xl shadow-md ring-1 ring-ink-200/50 dark:ring-ink-800/50"
+/>
 
 **Root Cause**: If the Private DNS Zone `privatelink.openai.azure.com` is not linked to the Virtual Network with registration disabled, standard Azure recursive resolvers return the public IP, resulting in immediate `403 Forbidden: Public Network Access Denied` errors.
 
