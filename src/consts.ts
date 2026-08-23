@@ -27,7 +27,7 @@ export const NAV_LINKS = [
 
 // Comments configuration: Cusdis (Zero login required for visitors).
 export const CUSDIS = {
-  appId: '8f74112e-e47e-4074-a46c-c9d3008f1b62',
+  appId: 'd0a2ef43-288b-448f-8dba-5467fabb7a58',
   host: 'https://cusdis.com',
 }
 
