@@ -5,7 +5,7 @@ import { SOCIALS, AUTHOR } from "@/consts";
 
 <BaseLayout
   title="Contact"
-  description={`Get in touch with ${AUTHOR.name} — connect on LinkedIn, GitHub, or email.`}
+  description={`Get in touch with ${AUTHOR.name} — connect on LinkedIn or GitHub.`}
 >
   <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
     <header class="mb-10">
@@ -69,36 +69,6 @@ import { SOCIALS, AUTHOR } from "@/consts";
           >
           <span class="text-ink-500 dark:text-ink-400 block text-sm"
             >@nithin42</span
-          >
-        </span>
-      </a>
-
-      <a
-        href={`mailto:${AUTHOR.email}`}
-        class="group border-ink-200 hover:border-azure-300 hover:shadow-azure-500/5 dark:border-ink-800 dark:bg-ink-900 dark:hover:border-azure-700 flex items-center gap-4 rounded-2xl border bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-lg sm:col-span-2"
-      >
-        <span
-          class="bg-azure-50 text-azure-600 dark:bg-ink-800 dark:text-azure-400 flex h-11 w-11 items-center justify-center rounded-xl"
-        >
-          <svg
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3 8l9 6 9-6M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"
-            ></path></svg
-          >
-        </span>
-        <span>
-          <span class="text-ink-900 block font-semibold dark:text-white"
-            >Email</span
-          >
-          <span class="text-ink-500 dark:text-ink-400 block text-sm"
-            >{AUTHOR.email}</span
           >
         </span>
       </a>
