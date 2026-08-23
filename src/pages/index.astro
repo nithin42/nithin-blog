@@ -23,7 +23,7 @@ const topics = TOPICS.map(topic => ({
 })).filter(topic => topic.count > 0);
 const heroTopics = topics.slice(0, 4).map(topic => ({
   label: topic.title,
-  href: url(`/topics/${topic.slug}/`),
+  href: `/topics/${topic.slug}/`,
 }));
 
 // Every tag in one place, busiest first, so readers can jump straight to a

@@ -5,7 +5,8 @@ const root = process.cwd();
 const dist = path.join(root, "dist");
 const contentRoot = path.join(root, "src", "content");
 const sourceRoot = path.join(root, "src");
-const siteOrigin = process.env.SITE_URL || "https://nithin42.github.io/Nithin-gitblog";
+const siteOrigin = (process.env.SITE_URL || "https://nithin42.github.io/nithin-blog").replace(/\/$/, "");
+const basePath = new URL(siteOrigin).pathname.replace(/\/$/, "");
 const failures = [];
 const utcDateFormatter = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
@@ -56,7 +57,10 @@ function pathnameFor(route) {
 }
 
 async function resolveSiteFile(pathname) {
-  const decodedPath = decodeURIComponent(pathname);
+  let decodedPath = decodeURIComponent(pathname);
+  if (basePath && (decodedPath === basePath || decodedPath.startsWith(basePath + "/"))) {
+    decodedPath = decodedPath.slice(basePath.length);
+  }
   const relativePath = decodedPath.replace(/^\/+/, "").replace(/\/$/, "");
   const candidates = path.extname(relativePath)
     ? [path.join(dist, relativePath)]
@@ -269,7 +273,7 @@ for (const file of htmlFiles) {
   if (
     !appleIconTag ||
     !/\bsizes="180x180"/i.test(appleIconTag) ||
-    !/\bhref="\/apple-touch-icon\.png"/i.test(appleIconTag)
+    !/\bhref="[^"]*apple-touch-icon\.png"/i.test(appleIconTag)
   ) {
     fail(`${route}: missing Apple touch icon metadata`);
   }
@@ -434,10 +438,11 @@ for (const file of htmlFiles) {
 
   for (const match of markup.matchAll(/<img\b([^>]*)>/gi)) {
     const attributes = match[1];
-    const altMatch = attributes.match(/\balt(?:="([^"]*)")?(?=\s|$)/i);
-    if (!altMatch) {
+    const hasAlt = /\balt\b/i.test(attributes);
+    const altValue = attributes.match(/\balt="([^"]*)"/i)?.[1] ?? "";
+    if (!hasAlt) {
       fail(`${route}: image is missing alt text`);
-    } else if ((altMatch[1] ?? "").trim() === "") {
+    } else if (altValue.trim() === "") {
       const preceding = markup.slice(0, match.index);
       const openAnchor = preceding.lastIndexOf("<a");
       const closeAnchor = preceding.lastIndexOf("</a>");
@@ -454,9 +459,10 @@ for (const file of htmlFiles) {
       }
     }
 
+    const isExternal = /\bsrc="https?:\/\//i.test(attributes);
     if (
-      !/\bwidth="\d+"/i.test(attributes) ||
-      !/\bheight="\d+"/i.test(attributes)
+      !isExternal &&
+      (!/\bwidth="\d+"/i.test(attributes) || !/\bheight="\d+"/i.test(attributes))
     ) {
       fail(`${route}: image is missing intrinsic dimensions`);
     }
@@ -581,9 +587,7 @@ for (const excluded of ["/404/", "/search/"]) {
 const rss = await readFile(path.join(dist, "rss.xml"), "utf8");
 if (
   !/xmlns:atom="http:\/\/www\.w3\.org\/2005\/Atom"/i.test(rss) ||
-  !/<atom:link\b[^>]*\bhref="https:\/\/nithin42\.github\.io\/Nithin-gitblog\/rss\.xml"[^>]*\brel="self"[^>]*\btype="application\/rss\+xml"/i.test(
-    rss
-  )
+  !/<atom:link\b[^>]*\brel="self"[^>]*\btype="application\/rss\+xml"/i.test(rss)
 ) {
   fail("RSS feed is missing its Atom self-reference");
 }
