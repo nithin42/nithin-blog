@@ -2,7 +2,7 @@ export const SITE_TITLE = 'Nithin'
 export const SITE_TAGLINE = 'Cloud & AI Solutions Architect'
 export const SITE_DESCRIPTION =
   'Personal blog and portfolio of Nithin, Cloud & AI Solutions Architect sharing insights on Azure, AI Foundry, Multi-Agent systems, and modern cloud architecture.'
-export const SITE_URL = 'https://nithin42.github.io/Nithin-gitblog'
+export const SITE_URL = 'https://nithin42.github.io/nithin-blog'
 
 export const AUTHOR = {
   name: 'Nithin',
@@ -27,7 +27,7 @@ export const NAV_LINKS = [
 
 // Giscus comments configuration.
 export const GISCUS = {
-  repo: 'nithin42/Nithin-gitblog',
+  repo: 'nithin42/nithin-blog',
   repoId: 'R_kgDOUA_nHg',
   category: 'General',
   categoryId: 'DIC_kwDOUA_nHs4Cn_placeholder',

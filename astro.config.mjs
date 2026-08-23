@@ -59,7 +59,7 @@ function shikiPaletteStyles() {
 // https://astro.build/config
 export default defineConfig({
   site: process.env.SITE_URL || 'https://nithin42.github.io',
-  base: process.env.BASE_PATH || '/Nithin-gitblog',
+  base: process.env.BASE_PATH || '/nithin-blog',
   markdown: {
     processor: unified({
       rehypePlugins: [accessibleCodeBlocks, shikiPaletteStyles],
