@@ -20,16 +20,44 @@ const currentUrl = Astro.url.href;
     </p>
   </div>
 
-  <div
-    id="cusdis_thread"
-    data-host={CUSDIS.host}
-    data-app-id={CUSDIS.appId}
-    data-page-id={postId || currentUrl}
-    data-page-url={currentUrl}
-    data-page-title={postTitle}
-    class="min-h-[240px] w-full"
-  >
+  <div class="w-full min-h-[480px]">
+    <div
+      id="cusdis_thread"
+      data-host={CUSDIS.host}
+      data-app-id={CUSDIS.appId}
+      data-page-id={postId || currentUrl}
+      data-page-url={currentUrl}
+      data-page-title={postTitle}
+      data-theme="auto"
+      class="w-full min-h-[480px]"
+    >
+    </div>
   </div>
 </section>
 
 <script is:inline src="https://cusdis.com/js/cusdis.es.js" async defer></script>
+
+<script is:inline>
+  window.addEventListener('message', function(e) {
+    try {
+      var msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+      if (msg && msg.from === 'cusdis' && msg.event === 'resize') {
+        var iframe = document.querySelector('#cusdis_thread iframe');
+        if (iframe && msg.data) {
+          iframe.style.height = (Number(msg.data) + 30) + 'px';
+          iframe.style.minHeight = (Number(msg.data) + 30) + 'px';
+          iframe.style.overflow = 'hidden';
+        }
+      }
+    } catch (err) {}
+  });
+</script>
+
+<style is:global>
+  #cusdis_thread iframe {
+    width: 100% !important;
+    min-height: 480px !important;
+    border: none !important;
+    overflow: hidden !important;
+  }
+</style>
