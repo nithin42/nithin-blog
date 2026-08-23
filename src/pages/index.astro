@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import FeaturedPost from "@/components/FeaturedPost.astro";
 import PostCard from "@/components/PostCard.astro";
-import NewsletterSignup from "@/components/NewsletterSignup.astro";
 import Hero from "@/components/Hero.astro";
 import TagCloud from "@/components/TagCloud.astro";
 import { TOPICS, getTopicPosts } from "@/utils/topics";
@@ -95,13 +94,11 @@ const tags = [...tagCounts.entries()]
       )
     }
 
-    <!-- Return-value hooks: subscribe + explore topics -->
-    <section class="mt-14 grid gap-6 pb-16 md:grid-cols-2">
-      <NewsletterSignup compact />
-
-      {
-        topics.length > 0 && (
-          <div class="border-ink-200 dark:border-ink-800 dark:bg-ink-900 rounded-2xl border bg-white p-5">
+    <!-- Explore topics -->
+    {
+      topics.length > 0 && (
+        <section class="mt-14 pb-16">
+          <div class="border-ink-200 dark:border-ink-800 dark:bg-ink-900 rounded-2xl border bg-white p-6 max-w-xl mx-auto">
             <div class="flex items-center justify-between">
               <h2 class="text-ink-900 text-sm font-semibold dark:text-white">
                 Explore topics
@@ -110,7 +107,7 @@ const tags = [...tagCounts.entries()]
                 href={url('/topics/')}
                 class="text-azure-600 dark:text-azure-400 text-xs font-medium hover:underline"
               >
-                All
+                All &rarr;
               </a>
             </div>
             <ul class="mt-3 space-y-1">
@@ -129,8 +126,8 @@ const tags = [...tagCounts.entries()]
               ))}
             </ul>
           </div>
-        )
-      }
-    </section>
+        </section>
+      )
+    }
   </div>
 </BaseLayout>
