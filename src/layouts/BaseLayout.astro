@@ -67,5 +67,27 @@ const {
       <slot />
     </main>
     <Footer />
+
+    <script is:inline>
+      function initGlobalViewsCounters() {
+        const elements = document.querySelectorAll('[data-postcard-views][data-path]');
+        elements.forEach(el => {
+          const rawPath = el.getAttribute('data-path');
+          if (!rawPath) return;
+          const cleanPath = rawPath.replace(/\/$/, '');
+          fetch(`https://nithin-blog.goatcounter.com/counter/${encodeURIComponent(cleanPath)}.json`)
+            .then(res => res.json())
+            .then(data => {
+              if (data && data.count) {
+                el.textContent = data.count;
+              }
+            })
+            .catch(() => {});
+        });
+      }
+      initGlobalViewsCounters();
+      document.addEventListener('astro:page-load', initGlobalViewsCounters);
+      document.addEventListener('astro:after-swap', initGlobalViewsCounters);
+    </script>
   </body>
 </html>
