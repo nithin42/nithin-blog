@@ -71,9 +71,12 @@ const {
     <script is:inline>
       function initGlobalViewsCounters() {
         const elements = document.querySelectorAll('[data-postcard-views][data-path]');
+        const prefix = window.location.pathname.startsWith('/nithin-blog') ? '/nithin-blog' : '';
         elements.forEach(el => {
-          const rawPath = el.getAttribute('data-path');
-          if (!rawPath) return;
+          let rawPath = el.getAttribute('data-path') || '';
+          if (!rawPath.startsWith('/nithin-blog') && prefix) {
+            rawPath = prefix + (rawPath.startsWith('/') ? rawPath : '/' + rawPath);
+          }
           const cleanPath = rawPath.replace(/\/$/, '');
           fetch(`https://nithin-blog.goatcounter.com/counter/${encodeURIComponent(cleanPath)}.json`)
             .then(res => res.json())
