@@ -108,6 +108,39 @@ const titleAside = titleMatch ? titleMatch[2] : null;
           }
         </div>
         <TagList tags={tags} max={4} class="mt-4" />
+
+        {/* Mobile & Tablet Compact Metrics Bar */}
+        <div class="border-ink-200 bg-ink-50/70 dark:border-ink-800 dark:bg-ink-900/50 mt-5 mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-2.5 text-xs xl:hidden">
+          <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1.5 text-ink-600 dark:text-ink-300 font-medium">
+              <svg class="h-4 w-4 text-azure-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <span data-mobile-views-count>1</span> views
+            </span>
+            <span class="flex items-center gap-1.5 text-ink-600 dark:text-ink-300 font-medium">
+              <svg class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              <a href="#comments-heading" class="hover:text-azure-500 transition">
+                <span data-mobile-comments-count>0</span> comments
+              </a>
+            </span>
+            <span class="flex items-center gap-1.5 text-ink-600 dark:text-ink-300 font-medium">
+              <svg class="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{readingTime}</span>
+            </span>
+          </div>
+          <a
+            href="#comments-heading"
+            class="text-azure-600 dark:text-azure-400 font-semibold hover:underline"
+          >
+            Comment &rarr;
+          </a>
+        </div>
       </header>
 
       {
@@ -388,7 +421,8 @@ const titleAside = titleMatch ? titleMatch[2] : null;
     // Fetch and display live page views
     const viewsCountEl = document.querySelector<HTMLElement>("[data-page-views-count]");
     const sidebarViewsEl = document.querySelector<HTMLElement>("[data-sidebar-views-count]");
-    if (viewsCountEl || sidebarViewsEl) {
+    const mobileViewsEl = document.querySelector<HTMLElement>("[data-mobile-views-count]");
+    if (viewsCountEl || sidebarViewsEl || mobileViewsEl) {
       const path = window.location.pathname.replace(/\/$/, "");
       fetch(`https://nithin-blog.goatcounter.com/counter/${encodeURIComponent(path)}.json`)
         .then(res => res.json())
@@ -396,6 +430,7 @@ const titleAside = titleMatch ? titleMatch[2] : null;
           if (data && data.count) {
             if (viewsCountEl) viewsCountEl.textContent = data.count;
             if (sidebarViewsEl) sidebarViewsEl.textContent = data.count;
+            if (mobileViewsEl) mobileViewsEl.textContent = data.count;
           }
         })
         .catch(() => {});
