@@ -24,7 +24,7 @@
     "format": "prettier --write src scripts .github/workflows astro.config.mjs package.json tsconfig.json public/site.webmanifest"
   },
   "dependencies": {
-    "@astrojs/mdx": "^7.0.4",
+    "@astrojs/mdx": "^7.0.7",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.1.1"
