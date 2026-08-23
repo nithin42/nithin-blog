@@ -84,6 +84,10 @@ const titleAside = titleMatch ? titleMatch[2] : null;
           <span aria-hidden="true">&middot;</span>
           <span>{readingTime}</span>
           <span aria-hidden="true">&middot;</span>
+          <span data-page-views class="inline-flex items-center gap-1 text-ink-600 dark:text-ink-300 font-medium">
+            <span data-page-views-count>1</span> views
+          </span>
+          <span aria-hidden="true">&middot;</span>
           <span>
             By <a
               href={url('/about/')}
@@ -315,6 +319,20 @@ const titleAside = titleMatch ? titleMatch[2] : null;
     window.addEventListener("scroll", onScroll, { passive: true, signal });
     window.addEventListener("resize", onScroll, { passive: true, signal });
     update();
+
+    // Fetch and display live page views
+    const viewsCountEl = document.querySelector<HTMLElement>("[data-page-views-count]");
+    if (viewsCountEl) {
+      const path = window.location.pathname.replace(/\/$/, "");
+      fetch(`https://nithin-blog.goatcounter.com/counter/${encodeURIComponent(path)}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.count) {
+            viewsCountEl.textContent = data.count;
+          }
+        })
+        .catch(() => {});
+    }
   }
 
   initArticleChrome();
