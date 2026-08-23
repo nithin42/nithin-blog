@@ -25,16 +25,16 @@ export const NAV_LINKS = [
   { href: '/contact/', label: 'Contact' },
 ]
 
-// Giscus comments configuration.
-export const GISCUS = {
-  repo: 'nithin42/nithin-blog',
-  repoId: 'R_kgDOUA_nHg',
-  category: 'General',
-  categoryId: 'DIC_kwDOUA_nHs4Cn_placeholder',
-  mapping: 'pathname',
-  reactionsEnabled: '1',
-  emitMetadata: '0',
-  inputPosition: 'top',
-  lang: 'en',
+// Comments configuration: Cusdis (Zero login required for visitors).
+export const CUSDIS = {
+  appId: '8f74112e-e47e-4074-a46c-c9d3008f1b62',
+  host: 'https://cusdis.com',
 }
+
+// Privacy-first traffic analytics (zero cookies, GDPR compliant).
+export const ANALYTICS = {
+  goatcounterCode: 'nithin-blog',
+  enabled: true,
+}
+
 
