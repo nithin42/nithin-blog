@@ -1,8 +1,8 @@
-﻿# Nithin — Personal Blog & Portfolio
+# Nithin — Personal Blog & Portfolio
 
 The personal blog and portfolio of **Nithin**, Cloud Developer & AI Solutions Architect. Built with [Astro](https://astro.build) and [Tailwind CSS](https://tailwindcss.com), deployed to [GitHub Pages](https://pages.github.com/).
 
-🌐 **Live Site**: [https://nithin42.github.io/Nithin-gitblog/](https://nithin42.github.io/Nithin-gitblog/)
+🌐 **Live Site**: [https://nithin42.github.io/nithin-blog/](https://nithin42.github.io/nithin-blog/)
 
 ---
 
@@ -41,8 +41,8 @@ The personal blog and portfolio of **Nithin**, Cloud Developer & AI Solutions Ar
 ### Installation
 
 ```bash
-git clone https://github.com/nithin42/Nithin-gitblog.git
-cd Nithin-gitblog
+git clone https://github.com/nithin42/nithin-blog.git
+cd nithin-blog
 npm install
 ```
 
