@@ -1,8 +1,8 @@
 ---
-import type { ImageMetadata } from "astro";
 import {
   AUTHOR,
   SITE_DESCRIPTION,
+  SITE_PAGE_TITLE,
   SITE_TITLE,
   SITE_URL,
   SOCIALS,
@@ -33,7 +33,11 @@ const {
   noindex = false,
 } = Astro.props;
 
-const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+const pageTitle = title
+  ? title.includes(SITE_TITLE)
+    ? title
+    : `${title} · ${SITE_TITLE}`
+  : SITE_PAGE_TITLE || SITE_TITLE;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imagePath = typeof image === "string" ? image : image.src;
 const socialImage = new URL(imagePath, Astro.site);

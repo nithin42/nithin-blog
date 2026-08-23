@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nithin42.github.io/Nithin-gitblog/sitemap-index.xml
+Sitemap: https://nithin42.github.io/nithin-blog/sitemap-index.xml

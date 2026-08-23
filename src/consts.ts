@@ -1,7 +1,9 @@
 export const SITE_TITLE = 'Nithin'
 export const SITE_TAGLINE = 'Cloud & AI Solutions Architect'
+export const SITE_PAGE_TITLE =
+  'Nithin | Cloud & AI Solutions Architect — Azure, AI Foundry & Multi-Agent Systems'
 export const SITE_DESCRIPTION =
-  'Personal blog and portfolio of Nithin, Cloud & AI Solutions Architect sharing insights on Azure, AI Foundry, Multi-Agent systems, and modern cloud architecture.'
+  'Field notes, architecture guides, and reference implementations on Azure AI Foundry, Multi-Agent Swarms, and Zero-Trust cloud systems by Nithin.'
 export const SITE_URL = 'https://nithin42.github.io/nithin-blog'
 
 export const AUTHOR = {
