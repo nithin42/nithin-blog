@@ -25,34 +25,13 @@ These field notes detail the design and implementation of an Autonomous Multi-Ag
 
 The swarm divides operational responsibilities across three isolated agents coordinated by the Azure AI Agent Service orchestrator:
 
-```mermaid
-flowchart TD
-    Shortage["Factory Line Shortage<br>Part #GX-402 (0 Units)"] --> Orchestrator["Swarm Orchestrator<br>(Azure AI Agent Service)"]
-
-    subgraph Swarm ["Autonomous Agent Swarm"]
-        Procurement["1. Procurement Agent<br>(SAP OData Client)"]
-        Contract["2. Contract SLA Agent<br>(Azure AI Search)"]
-        Compliance["3. Compliance Agent<br>(Two-Phase Commit Gate)"]
-    end
-
-    subgraph Enterprise ["Connected Platforms"]
-        SAP["SAP S/4HANA ERP"]
-        Search[("Azure AI Search (2,000 MSAs)")]
-        Teams["Microsoft Teams (Adaptive Card)"]
-        SNOW["ServiceNow ITSM (Change Request)"]
-    end
-
-    Orchestrator --> Procurement <--> SAP
-    Orchestrator --> Contract <--> Search
-    Orchestrator --> Compliance --> Teams
-    Compliance -->|Upon Director Signature| SNOW
-```
+![Autonomous Multi-Agent Swarm Architecture Topology](@/assets/blog/erp-swarm-topology-diagram.jpg)
 
 ### Specialized Swarm Agents
 
-1. **Procurement Agent**: Queries real-time inventory balances from SAP S/4HANA via OData services and stages pending purchase orders in an isolated `DRAFT` state.
+1. **Procurement Agent**: Queries real-time inventory balances from SAP S/4HANA via OData services and stages pending purchase orders in an isolated draft state.
 2. **Contract SLA Agent**: Performs hybrid vector and semantic search across 2,000 vendor Master Service Agreements (MSAs) in Azure AI Search to verify delivery guarantees and penalty terms.
-3. **Compliance and Approval Agent**: Evaluates procurement risk thresholds, generates a cryptographically signed Microsoft Teams Adaptive Card for human sign-off, and records an official ServiceNow Change Request (`CHG0010294`).
+3. **Compliance and Approval Agent**: Evaluates procurement risk thresholds, generates a cryptographically signed Microsoft Teams Adaptive Card for human sign-off, and records an official ServiceNow Change Request (CHG0010294).
 
 ---
 
@@ -60,36 +39,13 @@ flowchart TD
 
 To guarantee that no autonomous agent directly executes unvalidated financial mutations, the workflow operates as a two-phase state machine:
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Sensor as Factory Sensor
-    participant Orch as Swarm Orchestrator
-    participant SAP as SAP S/4HANA
-    participant Search as Azure AI Search
-    participant Teams as Operations Director
-    participant SNOW as ServiceNow
+![Cryptographic Two-Phase Commit Protocol for AI Agent Swarms](@/assets/blog/two-phase-commit-sequence-diagram.jpg)
 
-    Sensor->>Orch: Stock Shortage (Part #GX-402: 0 Units)
-    Note over Orch: Phase 1: PREPARE (Read-Only & Draft Staging)
-    Orch->>SAP: Query Approved Suppliers & Stock
-    SAP-->>Orch: Apex Dynamics ($42,500, 48h Lead Time)
-    Orch->>Search: Verify Vendor SLA & Late Delivery Penalty
-    Search-->>Orch: Contract #8821 Validated ($5,000/day penalty)
-    Orch->>SAP: Create Staged Draft PO (Status: BLOCKED)
-    
-    Note over Orch: Phase 2: COMMIT GATE (Human Approval)
-    Orch->>Teams: Dispatch Adaptive Card + Signed Nonce
-    Teams->>Orch: Director Signs Mutation via Entra JWT
-    Orch->>SNOW: Create Change Request (CHG0010294)
-    SNOW-->>Orch: Approved (State: Scheduled)
-    Orch->>SAP: Commit Staged PO (Status: RELEASED)
-    SAP-->>Orch: Confirmation (Doc #1009841)
-```
+### Phase 1: Prepare (Read-Only and Draft Staging)
+In Phase 1, the AI agent possesses zero write authorization on the live financial ledger. The Purchase Order is created in SAP with an explicit lock state (BLOCKED_FOR_APPROVAL). The ERP database rejects automated dispatch until Phase 2 verifies a valid HMAC nonce signed by the Operations Director.
 
-### Phase 1 Isolation Requirements
-
-In Phase 1, the AI agent possesses zero write authorization on the live financial ledger. The Purchase Order is created with an explicit lock state (`BLOCKED_FOR_APPROVAL`). The ERP database rejects automated dispatch until Phase 2 verifies a valid HMAC nonce signed by the Operations Director.
+### Phase 2: Commit (Human-in-the-Loop Release)
+Upon reviewing the risk assessment, the Operations Director approves the purchase directly inside Microsoft Teams. The Compliance Agent verifies the cryptographic signature, registers the ServiceNow Change Ticket, and releases the purchase order in SAP S/4HANA.
 
 ---
 
@@ -199,23 +155,35 @@ def search_vendor_sla(search_client: SearchClient, vendor_id: str, query_vector:
 
 ---
 
-## Production vs. Prototype Comparison
+## Architectural Comparison: Prototype vs. Production
 
-| Feature | Prototype Script | Enterprise Production Architecture |
-| :--- | :--- | :--- |
-| **Authentication** | Hardcoded API keys in `.env` | **Passwordless Managed Identity (`DefaultAzureCredential`)** |
-| **ERP Mutation** | Direct unvalidated agent writes | **Two-Phase Commit (Draft PO staged until Teams approval)** |
-| **Contract Grounding** | Naive context stuffing | **Azure AI Search (Hybrid Vector + Semantic Ranker on 2k MSAs)** |
-| **Audit Compliance** | Loose console logs | **Automated ServiceNow Change Request (`CHG0010294`) logging** |
-| **Network Security** | Public API endpoints | **Zero-Trust Private Endpoints with Private DNS Zones** |
+### Authentication and Identity
+- **Prototype**: Hardcoded API keys stored in local environment files.
+- **Production**: 100% passwordless authentication powered by Microsoft Entra Managed Identities (DefaultAzureCredential).
+
+### ERP Database Safety
+- **Prototype**: Direct, unvalidated agent writes to production databases.
+- **Production**: Cryptographic Two-Phase Commit where draft purchase orders are staged until approved by a human approver.
+
+### Contract Grounding and Search
+- **Prototype**: Unstructured string concatenation injected into prompt context.
+- **Production**: Hybrid Vector and Semantic Search across 2,000 Master Service Agreements in Azure AI Search.
+
+### Auditability and Compliance
+- **Prototype**: Transient terminal logs without persistent traceability.
+- **Production**: Automated ServiceNow Change Request tickets creating an immutable audit trail for SOX compliance.
+
+### Network Topology
+- **Prototype**: Public endpoints exposed over wide-area networks.
+- **Production**: Zero-trust virtual network integration using Private Endpoints and Private DNS Zones.
 
 ---
 
 ## Hard-Won Lessons from Production
 
-1. **Idempotency Keys are Mandatory**: Network retries during ERP calls can trigger duplicate purchase orders. Always compute a deterministic idempotency key from `(part_number, vendor_id, timestamp_window)`.
+1. **Idempotency Keys are Mandatory**: Network retries during ERP calls can trigger duplicate purchase orders. Always compute a deterministic idempotency key from part number, vendor ID, and time window.
 2. **Set Nonce Expiration Windows**: Adaptive Card approval nonces should expire within 15 minutes. If an approver does not sign within the window, cancel the staged draft automatically.
-3. **Cache Static ERP Schemas**: Caching OData entity metadata reduced context token overhead by **64%** and lowered multi-agent turnaround latency from 4.2s to 1.1s.
+3. **Cache Static ERP Schemas**: Caching OData entity metadata reduced context token overhead by 64% and lowered multi-agent turnaround latency from 4.2s to 1.1s.
 
 ---
 
