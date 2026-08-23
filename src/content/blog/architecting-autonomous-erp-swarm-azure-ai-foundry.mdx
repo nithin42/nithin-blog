@@ -2,7 +2,7 @@
 title: "Building an Autonomous Multi-Agent ERP Swarm on Azure AI Foundry: Field Notes on Two-Phase Commit and SAP OData"
 description: "How to orchestrate an autonomous supply chain agent swarm across SAP S/4HANA, Azure AI Search, and ServiceNow with a cryptographic Two-Phase Commit human approval gate."
 pubDate: 2026-08-20
-heroImage: "@/assets/blog/azure-ai-foundry-erp-swarm-hero.jpg"
+heroImage: "@/assets/blog/azure-foundry-erp-swarm-hero-v4.jpg"
 heroAlt: "3D isometric diorama of Azure AI Foundry Multi-Agent Swarm connecting SAP S/4HANA, Azure AI Search, and ServiceNow with Microsoft Teams approval gates."
 tags:
   - AI & Agents
@@ -25,7 +25,7 @@ These field notes detail the design and implementation of an Autonomous Multi-Ag
 
 The swarm divides operational responsibilities across three isolated agents coordinated by the Azure AI Agent Service orchestrator:
 
-![Autonomous Multi-Agent Swarm Architecture Topology](@/assets/blog/erp-swarm-topology-diagram.jpg)
+![Autonomous Multi-Agent Swarm Architecture Topology](@/assets/blog/erp-swarm-topology-diagram-v4.jpg)
 
 ### Specialized Swarm Agents
 
@@ -39,7 +39,7 @@ The swarm divides operational responsibilities across three isolated agents coor
 
 To guarantee that no autonomous agent directly executes unvalidated financial mutations, the workflow operates as a two-phase state machine:
 
-![Cryptographic Two-Phase Commit Protocol for AI Agent Swarms](@/assets/blog/two-phase-commit-sequence-diagram.jpg)
+![Cryptographic Two-Phase Commit Protocol for AI Agent Swarms](@/assets/blog/two-phase-commit-sequence-diagram-v4.jpg)
 
 ### Phase 1: Prepare (Read-Only and Draft Staging)
 In Phase 1, the AI agent possesses zero write authorization on the live financial ledger. The Purchase Order is created in SAP with an explicit lock state (BLOCKED_FOR_APPROVAL). The ERP database rejects automated dispatch until Phase 2 verifies a valid HMAC nonce signed by the Operations Director.
